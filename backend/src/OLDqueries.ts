@@ -34,9 +34,22 @@ const getUserById = (req: Request, res: Response) => {
     })
 }
 
+const getUserByUsernameTwo = (req: Request, res: Response) => {
+    const username =(req.params.id)
+    client.connect()
+    client.query("SELECT * FROM users WHERE username ILIKE $1", [`'${username}%'`], (error: any, results: {rows: any}) => {
+        if(error){
+            throw error
+        }
+        res.status(200).json(results.rows)
+        client.end()
+    })
+}
+
 
 
 
 module.exports = {
-    getUsers
+    getUsers,
+    getUserByUsernameTwo
 }
