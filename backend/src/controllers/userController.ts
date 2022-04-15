@@ -7,6 +7,7 @@ router.get("/getbyid/:id", db.getUserById)
 router.get("/getbyusername/:username", db.getUserByUsername)
 router.post("/signup", db.createUser)
 router.delete("/delete/:id", db.deleteUser)
+router.post("/login", db.login)
 
 
 module.exports = router
