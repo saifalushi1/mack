@@ -1,13 +1,13 @@
 const express = require("express")
 const router = express.Router()
-const db = require("./userQueries")
+const userdb = require("./userQueries")
 
-router.get("/getall", db.getAllUsers)
-router.get("/getbyid/:id", db.getUserById)
-router.get("/getbyusername/:username", db.getUserByUsername)
-router.post("/signup", db.createUser)
-router.delete("/delete/:id", db.deleteUser)
-router.post("/login", db.login)
+router.get("/getall", userdb.getAllUsers)
+router.get("/getbyid/:id", userdb.getUserById)
+router.get("/getbyusername/:username", userdb.getUserByUsername)
+router.post("/signup", userdb.createUser)
+router.delete("/delete/:id", userdb.deleteUser)
+router.post("/login", userdb.login)
 
 
 module.exports = router

@@ -1,8 +1,6 @@
-const pgp = require('pg-promise')(/* options */)
-require('dotenv').config()
-const db = pgp(process.env.DBSTRING)
-const bcrypt = require('bcrypt')
+const db = require("../connection")
 import { Request, Response, NextFunction } from "express"
+const bcrypt = require('bcrypt')
 
 
 const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
@@ -71,16 +69,20 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     try{
         const userinfo = await db.one("SELECT password FROM users WHERE email = $1", [req.body.email]) 
         const match = await bcrypt.compare(req.body.password, userinfo.password);
-        res.status(200).json({
-            "match": match,
-            "userinfo": userinfo
-        })
+        if(match){
+            res.status(200).json({
+                "match": match,
+                "userinfo": userinfo
+            })
+        }
+
     } catch(err){
         next(err)
     }
 }
 
 module.exports = {
+    db,
     getAllUsers,
     getUserById,
     getUserByUsername,
