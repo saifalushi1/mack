@@ -14,8 +14,10 @@
     "bcrypt": "^5.0.1",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
+    "moment": "^2.29.3",
     "pg": "^8.7.3",
-    "pg-promise": "^10.11.1"
+    "pg-promise": "^10.11.1",
+    "socket.io": "^4.5.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
