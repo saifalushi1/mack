@@ -4,17 +4,22 @@ const http = require("http")
 const socketio = require("socket.io")
 const formatMessage = require("./utils/message")
 const {userJoin, getCurrentUser} = require("./utils/users")
-
+const cors = require("cors")
 
 
 const app = express();
 const server = http.createServer(app)
-const io = socketio(server)
+const io = socketio(server, {
+    cors: {
+        origin: "*"
+    }
+})
 const bot = "Mack Bot"
 const PORT = process.env.PORT || 8000
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(cors())
 
 io.on("connection", (socket: Socket) => {
     console.log("New Web Socket Connection")
