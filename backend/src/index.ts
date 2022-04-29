@@ -29,6 +29,11 @@ io.on("connection", (socket: Socket) => {
 
     // Broadcast when a user connects (to all users)
     socket.broadcast.emit("message", formatMessage(bot,"A user has joined the chat"))
+    
+    socket.on("chatMessage", (msg) => {
+        io.emit("message", formatMessage('user', msg))
+        console.log(msg)
+    })
 
     // runs when client disconnects (to all other users )
     socket.on("disconnect", () => {

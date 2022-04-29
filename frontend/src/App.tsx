@@ -29,6 +29,11 @@ function App() {
   const [chatBody, setChatBody] = useState<string>("")
   
   useEffect(() => {
+    
+  }, [])
+
+
+  useEffect(() => {
     socket.on("connect", () => {
       setConnected(true)
       console.log(socket.connected); // true
@@ -39,11 +44,12 @@ function App() {
      setMessages([...messages, message])
     })
     console.log(messages)
-  }, [setMessages])
+  }, [connected])
 
   const submitMessage = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
     console.log("message submitted")
+    socket.emit("chatMessage", chatMessage.text)
     setChatBody("")
 
   }
@@ -59,14 +65,12 @@ function App() {
       <div className="chat-sidebar">
         <h3><i className="fas fa-comments"></i> Room Name:</h3>
         <h2 id="room-name">JavaScript</h2>
-        <h3><i className="fas fa-users"></i> Users</h3>
-        <ul id="users">
-          <li>Brad</li>
-          <li>John</li>
-          <li>Mary</li>
-          <li>Paul</li>
-          <li>Mike</li>
-        </ul>
+        <h3><i className="fas fa-users"></i> mmessages from the server</h3>
+        {messages.map((item, index) => (
+        <ul>
+          <li>{item.text}</li>  
+          </ul>
+        ))}
       </div>
       <div className="chat-messages">
 	
@@ -80,7 +84,10 @@ function App() {
           type="text"
           placeholder="Enter Message"
           value={chatBody}
-          onChange={(e) => setChatBody(e.target.value)}
+          onChange={(e) => {
+            setChatBody(e.target.value)
+            setChatMessage({text: e.target.value, username: "test", time: "now"})
+          } }
           required
         />
         <button type="button" className="btn"><i className="fas fa-paper-plane"></i> Send</button>
