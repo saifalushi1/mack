@@ -24,17 +24,18 @@ app.use(cors())
 io.on("connection", (socket: Socket) => {
     console.log("New Web Socket Connection")
 
-    // //welcome new user
-    // socket.emit("message", formatMessage(bot, "welcome to the chat room"))
+    //welcome new user (to user)
+    socket.emit("message", formatMessage(bot, "welcome to the chat room"))
 
-    // // Broadcast when a user connects
-    // socket.broadcast.emit("message", formatMessage(bot,"A user has joined the chat"))
+    // Broadcast when a user connects (to all users)
+    socket.broadcast.emit("message", formatMessage(bot,"A user has joined the chat"))
 
-    // // runs when client disconnects
-    // socket.on("disconnect", () => {
-    //     io.emit("message", formatMessage(bot,"A user has left the chat"))
-    // })
+    // runs when client disconnects (to all other users )
+    socket.on("disconnect", () => {
+        io.emit("message", formatMessage(bot,"A user has left the chat"))
+    })
 })
+console.log("user has left the chat")
 
 
 const userController = require("./controllers/userController")
