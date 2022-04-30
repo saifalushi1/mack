@@ -38,9 +38,9 @@ io.on("connection", (socket: Socket) => {
     // runs when client disconnects (to all other users )
     socket.on("disconnect", () => {
         io.emit("message", formatMessage(bot,"A user has left the chat"))
+        console.log("user has left the chat")
     })
 })
-console.log("user has left the chat")
 
 
 const userController = require("./controllers/userController")

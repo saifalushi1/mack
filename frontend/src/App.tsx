@@ -29,51 +29,54 @@ function App() {
   const [chatBody, setChatBody] = useState<string>("")
   
   useEffect(() => {
-    
-  }, [])
-
-
-  useEffect(() => {
     socket.on("connect", () => {
       setConnected(true)
       console.log(socket.connected); // true
       console.log("connected")
       
     });
-    socket.on("message", (message: any) => {
-     setMessages([...messages, message])
-    })
-    console.log(messages)
-  }, [connected])
+  }, [])
 
+
+  useEffect(() => {
+    socket.on("message", (message: IchatMessage) => {
+      setMessages(x => [...x, message])
+     console.log("message from server:", {message})
+    })
+  }, [setMessages])
+  
   const submitMessage = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
     console.log("message submitted")
     socket.emit("chatMessage", chatMessage.text)
     setChatBody("")
-
+    
   }
-
+  
+  
+  console.log("messages state:", messages)
   return (
      <div className="App">
       <div className="chat-container">
     <header className="chat-header">
-      <h1><i className="fas fa-smile"></i> ChatCord</h1>
+      <h1><i className="fas fa-smile"></i> Mack</h1>
       <a href="index.html" className="btn">Leave Room</a>
     </header>
     <main className="chat-main">
       <div className="chat-sidebar">
         <h3><i className="fas fa-comments"></i> Room Name:</h3>
         <h2 id="room-name">JavaScript</h2>
-        <h3><i className="fas fa-users"></i> mmessages from the server</h3>
-        {messages.map((item, index) => (
-        <ul>
-          <li>{item.text}</li>  
-          </ul>
-        ))}
+        <h3><i className="fas fa-users"></i> messages from the server</h3>
       </div>
       <div className="chat-messages">
-	
+        <ul>
+        {messages.map((item, index) => (
+          <>
+          <li key={index} >{item.text}</li> 
+          <br />
+          </>
+          ))}
+          </ul>
       </div>
     </main>
     <div className="chat-form-container">
