@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { socket } from "./clientUtils/socket"
+import { formatMessage } from "./clientUtils/formatMessage"
+// const formatMessage = require("./clientUtils/formatMessage")
 
 interface IbotMessages {
   text: string
@@ -13,9 +15,8 @@ interface Iuser {
   email: string
 }
 
-interface IchatMessage {
-  text: string
-  time: string
+interface ImessageRoom {
+  room: number
   username: string
 }
 
@@ -23,9 +24,10 @@ interface IchatMessage {
 function App() {
   // const socket = io.connect("http://localhost:8000", {reconnect: true});
   const [messages, setMessages] = useState<Array<IbotMessages>>([]);
+  const [messageRoom, setMessageRoom] = useState<ImessageRoom>({room: 0, username: ""})
+  const [roomNumber, setRoomNumber] = useState<number>(0)
   const [connected, setConnected] = useState<Boolean>(false)
-  const [user, setUser] = useState<Iuser>({username: "", password: "", email: ""})
-  const [chatMessage, setChatMessage] = useState<IchatMessage>({text: "", time: "", username: ""})
+  const [user, setUser] = useState<Iuser>({username: "sushi", password: "", email: ""})
   const [chatBody, setChatBody] = useState<string>("")
   
   useEffect(() => {
@@ -37,9 +39,15 @@ function App() {
     });
   }, [])
 
+  useEffect(() => {
+    setMessageRoom(n => ({...n, username: user.username, room: roomNumber}))
+    socket.emit("joinRoom", messageRoom)
+  }, [])
+
+  console.log("messageRoom: ", messageRoom)
 
   useEffect(() => {
-    socket.on("message", (message: IchatMessage) => {
+    socket.on("message", (message: IbotMessages) => {
       setMessages(x => [...x, message])
      console.log("message from server:", {message})
     })
@@ -48,11 +56,10 @@ function App() {
   const submitMessage = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
     console.log("message submitted")
-    socket.emit("chatMessage", chatMessage.text)
+    socket.emit("chatMessage", chatBody)
     setChatBody("")
     
   }
-  
   
   console.log("messages state:", messages)
   return (
@@ -66,17 +73,16 @@ function App() {
       <div className="chat-sidebar">
         <h3><i className="fas fa-comments"></i> Room Name:</h3>
         <h2 id="room-name">JavaScript</h2>
-        <h3><i className="fas fa-users"></i> messages from the server</h3>
+        <h3><i className="fas fa-users"></i> users</h3>
       </div>
       <div className="chat-messages">
-        <ul>
         {messages.map((item, index) => (
-          <>
-          <li key={index} >{item.text}</li> 
+          <div className="message">
+            <p className="meta">{item.username} <span>{item.time}</span></p>
+            <p className="text">{item.text}</p>
           <br />
-          </>
+          </div>
           ))}
-          </ul>
       </div>
     </main>
     <div className="chat-form-container">
@@ -89,11 +95,10 @@ function App() {
           value={chatBody}
           onChange={(e) => {
             setChatBody(e.target.value)
-            setChatMessage({text: e.target.value, username: "test", time: "now"})
           } }
           required
         />
-        <button type="button" className="btn"><i className="fas fa-paper-plane"></i> Send</button>
+        <button type="submit" className="btn"><i className="fas fa-paper-plane"></i> Send</button>
       </form>
     </div>
   </div>
