@@ -29,7 +29,7 @@ io.on("connection", (socket: Socket) => {
         socket.join(user.room)
         console.log("userInfo: ", user)
         //welcome new user (to user)
-        socket.emit("message", formatMessage(bot, `Welcome to the chat room: ${user.room}`))
+        socket.emit("message", formatMessage(bot, `Welcome to the chat roomNumber: ${user.room} user: ${user.username}`))
     
         // Broadcast when a user connects (to all users)
         socket.broadcast.emit("message", formatMessage(bot,`${user.username} has joined the chat`))

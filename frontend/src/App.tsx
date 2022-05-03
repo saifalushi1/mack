@@ -39,10 +39,13 @@ function App() {
     });
   }, [])
 
+  // username is not being sent even if hardcoded in wtf?????
+  // also the issue of multiple messages being recieved is back again fml
+  // Change this to a function and call the function on button press with other persons id as the room number
   useEffect(() => {
     setMessageRoom(n => ({...n, username: user.username, room: roomNumber}))
     socket.emit("joinRoom", messageRoom)
-  }, [])
+  }, [setMessageRoom])
 
   console.log("messageRoom: ", messageRoom)
 
