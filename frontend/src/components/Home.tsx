@@ -1,6 +1,7 @@
-
+import { Link } from "react-router-dom"
 
 const Home = () => {
+
     return(
         <div className="join-container">
 			<header className="join-header">
