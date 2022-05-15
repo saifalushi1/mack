@@ -4,6 +4,7 @@ import { formatMessage } from "./clientUtils/formatMessage"
 import {Routes, Route, Link} from "react-router-dom"
 import Chat from "./components/Chat"
 import Login from './components/Login';
+import Navigation from './components/Navigation';
 
 // interface IbotMessages {
 //   text: string
@@ -68,6 +69,7 @@ const App = () => {
   // console.log("messages state:", messages)
   return (
     <>
+    <Navigation />
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="chat" element={<Chat user={user} connected={connected}/>} />
