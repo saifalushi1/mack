@@ -5,6 +5,7 @@ import {Routes, Route, Link} from "react-router-dom"
 import Chat from "./components/Chat"
 import Login from './components/Login';
 import Navigation from './components/Navigation';
+import SignUp from './components/SignUp';
 
 // interface IbotMessages {
 //   text: string
@@ -73,6 +74,7 @@ const App = () => {
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="chat" element={<Chat user={user} connected={connected}/>} />
+      <Route path="/signup" element={<SignUp />} />
     </Routes>
     </>
   );

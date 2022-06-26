@@ -23,9 +23,9 @@ app.use(cors())
 
 io.on("connection", (socket: Socket) => {
     console.log("New Web Socket Connection")
-    socket.on("joinRoom", ({username, room}) => {
+    socket.on("joinRoom", (username, room) => {
         const user = userJoin(socket.id, username, room)
-        
+
         socket.join(user.room)
         console.log("userInfo: ", user)
         //welcome new user (to user)
@@ -39,15 +39,15 @@ io.on("connection", (socket: Socket) => {
     // listen for chat message from client and send back the message
     socket.on("chatMessage", (msg) => {
         const user = getCurrentUser(socket.id)
-
         io.to(user.room).emit("message", formatMessage(user.username, msg))
         console.log(msg)
     })
 
     // runs when client disconnects (to all other users )
     socket.on("disconnect", () => {
-        const user = userLeave(socket.id)
+        const user = getCurrentUser(socket.id)
         io.to(user.room).emit("message", formatMessage(bot,`${user.username} has left the chat`))
+        
         console.log("user has left the chat")
     })
 })

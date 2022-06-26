@@ -5,9 +5,9 @@ const users: { id: number; username: string; room: number }[] = []
 // Join user to chat
 function userJoin(id:number, username:string, room: number) {
   const user = { id, username, room };
-
   users.push(user);
-
+  console.log("User: ", user)
+  console.log("UserARRAY: ", users)
   return user;
 }
 
@@ -19,10 +19,7 @@ function getCurrentUser(id: number) {
 // User leaves chat
 function userLeave(id: number) {
   const index = users.findIndex(user => user.id === id);
-
-  if (index !== -1) {
     return users.splice(index, 1)[0];
-  }
 }
 
 // Get room users
