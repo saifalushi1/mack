@@ -13,7 +13,7 @@ Ha... Oh god I hope so. I started this project sometime in April and its current
 (It's a mess but i'm too lazy to fix it rn)<br />
 Root: <code>run npm i</code><br />
 FrontEnd: <code>run npm i</code>Then<code>run npm start</code><br />
-BackEnd: <code>run npm i</code>Then<code>run npm build</code><br />
+BackEnd: <code>run npm i</code>Then<code>run npm build</code>*run this first*<br />
 
 
 ### DB Diagram
