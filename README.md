@@ -1,6 +1,6 @@
 ## Mack
 <br />
-<em>It's like slack but shittier.</em>
+<em>It's like slack but shittier</em>
 <br />
 
 ### What Purpose Does Mack Serve?
@@ -11,9 +11,9 @@ Ha... Oh god I hope so. I started this project sometime in April and its current
 
 ### How To Run
 (It's a mess but i'm too lazy to fix it rn)<br />
-Root: <code>run npm i</code>
-FrontEnd: <code>run npm i</code>Then<code>run npm start</code>
-BackEnd: <code>run npm i</code>Then<code>run npm build</code>
+Root: <code>run npm i</code><br />
+FrontEnd: <code>run npm i</code>Then<code>run npm start</code><br />
+BackEnd: <code>run npm i</code>Then<code>run npm build</code><br />
 
 
 ### DB Diagram
