@@ -1,5 +1,5 @@
 //storing users in memory right now but should implement with a db
-const users: { id: number; username: string; room: number }[] = []
+const users: { id: number; username: string; room: number }[] = [{id: 999, username: "ajdlkasjdlka", room: 500000}]
 
 
 // Join user to chat

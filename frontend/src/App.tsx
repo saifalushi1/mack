@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react"
 import { socket } from "./clientUtils/socket"
 import { formatMessage } from "./clientUtils/formatMessage"
-import {Routes, Route, Link} from "react-router-dom"
+import { Routes, Route, Link } from "react-router-dom"
 import Chat from "./components/Chat"
-import Login from './components/Login';
-import Navigation from './components/Navigation';
-import SignUp from './components/SignUp';
+import Login from "./components/Login"
+import Navigation from "./components/Navigation"
+import SignUp from "./components/SignUp"
 
 // interface IbotMessages {
 //   text: string
@@ -14,9 +14,9 @@ import SignUp from './components/SignUp';
 // }
 
 export interface Iuser {
-  username: string
-  password: string
-  email: string
+    username: string
+    password: string
+    email: string
 }
 
 // interface ImessageRoom {
@@ -24,60 +24,59 @@ export interface Iuser {
 //   username: string
 // }
 
-
 const App = () => {
-  // const socket = io.connect("http://localhost:8000", {reconnect: true});
-  const [connected, setConnected] = useState<boolean>(false)
-  const [user, setUser] = useState<Iuser>({username: "sushi", password: "", email: ""})
-  // const [messages, setMessages] = useState<Array<IbotMessages>>([]);
-  // const [messageRoom, setMessageRoom] = useState<ImessageRoom>({room: 0, username: ""})
-  // const [roomNumber, setRoomNumber] = useState<number>(0)
-  // const [chatBody, setChatBody] = useState<string>("")
-  
-  useEffect(() => {
-    socket.on("connect", () => {
-      setConnected(true)
-      console.log(socket.connected); // true
-      console.log("connected")
-    });
-  }, [])
+    // const socket = io.connect("http://localhost:8000", {reconnect: true});
+    const [connected, setConnected] = useState<boolean>(false)
+    const [user, setUser] = useState<Iuser>({ username: "sushi", password: "", email: "" })
+    // const [messages, setMessages] = useState<Array<IbotMessages>>([]);
+    // const [messageRoom, setMessageRoom] = useState<ImessageRoom>({room: 0, username: ""})
+    // const [roomNumber, setRoomNumber] = useState<number>(0)
+    // const [chatBody, setChatBody] = useState<string>("")
 
-  // username is not being sent even if hardcoded in wtf?????
-  // also the issue of multiple messages being recieved is back again fml
-  // Change this to a function and call the function on button press with other persons id as the room number
-  //   const joinRoom = () => {
-  //     setMessageRoom(n => ({...n, username: user.username, room: roomNumber}))
-  //     socket.emit("joinRoom", messageRoom)
-  //   }
+    useEffect(() => {
+        socket.on("connect", () => {
+            setConnected(true)
+            console.log(socket.connected) // true
+            console.log("connected")
+        })
+    }, [])
 
-  // console.log("messageRoom: ", messageRoom)
+    // username is not being sent even if hardcoded in wtf?????
+    // also the issue of multiple messages being recieved is back again fml
+    // Change this to a function and call the function on button press with other persons id as the room number
+    //   const joinRoom = () => {
+    //     setMessageRoom(n => ({...n, username: user.username, room: roomNumber}))
+    //     socket.emit("joinRoom", messageRoom)
+    //   }
 
-  // useEffect(() => {
-  //   socket.on("message", (message: IbotMessages) => {
-  //     setMessages(x => [...x, message])
-  //    console.log("message from server:", {message})
-  //   })
-  // }, [setMessages])
-  
-  // const submitMessage = (e: React.SyntheticEvent<HTMLFormElement>) => {
-  //   e.preventDefault()
-  //   console.log("message submitted")
-  //   socket.emit("chatMessage", chatBody)
-  //   setChatBody("")
-    
-  // }
-  
-  // console.log("messages state:", messages)
-  return (
-    <>
-    <Navigation />
-    <Routes>
-      <Route path="/" element={<Login />} />
-      <Route path="chat" element={<Chat user={user} connected={connected}/>} />
-      <Route path="/signup" element={<SignUp />} />
-    </Routes>
-    </>
-  );
+    // console.log("messageRoom: ", messageRoom)
+
+    // useEffect(() => {
+    //   socket.on("message", (message: IbotMessages) => {
+    //     setMessages(x => [...x, message])
+    //    console.log("message from server:", {message})
+    //   })
+    // }, [setMessages])
+
+    // const submitMessage = (e: React.SyntheticEvent<HTMLFormElement>) => {
+    //   e.preventDefault()
+    //   console.log("message submitted")
+    //   socket.emit("chatMessage", chatBody)
+    //   setChatBody("")
+
+    // }
+
+    // console.log("messages state:", messages)
+    return (
+        <>
+            <Navigation />
+            <Routes>
+                <Route path="/" element={<Login />} />
+                <Route path="chat" element={<Chat user={user} connected={connected} />} />
+                <Route path="/signup" element={<SignUp />} />
+            </Routes>
+        </>
+    )
 }
 
-export default App;
+export default App
