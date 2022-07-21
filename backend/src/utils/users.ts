@@ -1,29 +1,31 @@
-//storing users in memory right now but should implement with a db
-const users: { id: number; username: string; room: number }[] = [{id: 999, username: "ajdlkasjdlka", room: 500000}]
+//storing users in memory right now but should implement with a db like redis
+// if the app gets too large
+const users: Array<{ id: number; username: string; room: number }> = []
 
 
 // Join user to chat
-function userJoin(id:number, username:string, room: number) {
+const userJoin = (id:number, username:string, room: number) => {
   const user = { id, username, room };
   users.push(user);
-  console.log("User: ", user)
-  console.log("UserARRAY: ", users)
   return user;
 }
 
 // Get current user
-function getCurrentUser(id: number) {
+const getCurrentUser = (id: number) => {
   return users.find(user => user.id === id);
 }
 
+
 // User leaves chat
-function userLeave(id: number) {
+const userLeave = (id: number) => {
   const index = users.findIndex(user => user.id === id);
-    return users.splice(index, 1)[0];
+  const userToLeave = users[index]
+  users.splice(index, 1)[0]
+  return userToLeave;
 }
 
 // Get room users
-function getRoomUsers(room: number) {
+const getRoomUsers = (room: number) => {
   return users.filter(user => user.room === room);
 }
 

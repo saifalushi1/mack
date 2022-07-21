@@ -25,17 +25,14 @@ io.on("connection", (socket: Socket) => {
     console.log("New Web Socket Connection")
     socket.on("joinRoom", (username, room) => {
         const user = userJoin(socket.id, username, room)
-
         socket.join(user.room)
-        console.log("userInfo: ", user)
-        //welcome new user (to user)
+
         socket.emit("message", formatMessage(bot, `Welcome to the chat roomNumber: ${user.room} user: ${user.username}`))
     
         // Broadcast when a user connects (to all users)
         socket.broadcast.emit("message", formatMessage(bot,`${user.username} has joined the chat`))
     })
 
-    
     // listen for chat message from client and send back the message
     socket.on("chatMessage", (msg) => {
         const user = getCurrentUser(socket.id)
@@ -45,7 +42,8 @@ io.on("connection", (socket: Socket) => {
 
     // runs when client disconnects (to all other users )
     socket.on("disconnect", () => {
-        const user = getCurrentUser(socket.id)
+        const user = userLeave(socket.id)
+        console.log(user)
         io.to(user.room).emit("message", formatMessage(bot,`${user.username} has left the chat`))
         
         console.log("user has left the chat")

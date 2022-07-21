@@ -28,6 +28,11 @@ const Chat: React.FC<AppProps> = (props): JSX.Element => {
     }
 
     useEffect(() => {
+        joinRoom()
+        console.log("running")
+    }, [])
+
+    useEffect(() => {
         socket.on("message", (message: IbotMessages) => {
             setMessages((x) => [...x, message])
             console.log("message from server:", { message })
@@ -63,7 +68,6 @@ const Chat: React.FC<AppProps> = (props): JSX.Element => {
                         <h3>
                             <i className="fas fa-users"></i> Join Rooms
                         </h3>
-                        <button onClick={joinRoom}>Join Room 0</button>
                     </div>
                     <div className="chat-messages">
                         {messages.map((item, index) => (
