@@ -20,6 +20,9 @@ const getCurrentUser = (id: number) => {
 const userLeave = (id: number) => {
   const index = users.findIndex(user => user.id === id);
   const userToLeave = users[index]
+  if(!userToLeave){
+    return {id: -1, username: null, room: -1}
+  }
   users.splice(index, 1)[0]
   return userToLeave;
 }

@@ -7,7 +7,6 @@ import Login from "./components/Login"
 import Navigation from "./components/Navigation"
 import SignUp from "./components/SignUp"
 
-
 export interface Iuser {
     username: string
     password: string
