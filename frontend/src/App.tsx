@@ -3,9 +3,9 @@ import { socket } from "./clientUtils/socket"
 import { formatMessage } from "./clientUtils/formatMessage"
 import { Routes, Route, Link } from "react-router-dom"
 import Chat from "./components/Chat"
-import Login from "./components/Login"
 import Navigation from "./components/Navigation"
-import SignUp from "./components/SignUp"
+import SignUp from "./components/login/SignUp"
+import LoginPage from "./components/login/LoginPage"
 
 export interface Iuser {
     username: string
@@ -29,12 +29,10 @@ const App = () => {
         <>
             <Navigation />
             <Routes>
-                <Route path="/" element={<Login />} />
-                <Route path="chat" element={<Chat user={user} connected={connected} />} />
+                <Route path="/" element={<LoginPage />} />
+                <Route path="/chat" element={<Chat user={user} connected={connected} />} />
                 <Route path="/signup" element={<SignUp />} />
             </Routes>
-            {/* <Routes>
-            </Routes> */}
         </>
     )
 }
