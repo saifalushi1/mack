@@ -11,7 +11,7 @@ const Header = ({
     paragraph: string
     linkName: string
     linkUrl: string
-})  => {
+}) => {
     return (
         <div className="mb-10">
             <div className="flex justify-center">
