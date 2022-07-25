@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt')
 const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
     try{
         const users = await db.any("SELECT * FROM users")
-        res.status(200).json(users)
+        res.json(users)
     } catch(err) {
         next(err)
     }
@@ -16,9 +16,9 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
     try{
         const userById = await db.one("SELECT * FROM users WHERE id = $1", [req.params.id])
         console.log(userById)
-        res.status(200).json(userById)
+        res.json(userById)
     } catch(err){
-        console.log(err)
+        
         next(err)
     }
 }
@@ -29,7 +29,7 @@ const getUserByUsername = async (req: Request, res: Response, next: NextFunction
         //When passing a variable the library expects a string. So if it needs to be dynamic use `${}`
         const userByUsername = await db.any('SELECT * FROM users WHERE username LIKE \'$1#%\'', `${req.params.username}`)
         console.log(userByUsername)
-        res.status(200).json(userByUsername)
+        res.json(userByUsername)
     } catch(err){
         console.log(err)    
         next(err)
@@ -46,7 +46,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
             name: {first: req.body.firstname, last: req.body.lastname}, 
         }
         )
-        res.status(200).json(createdUser.rows)
+        res.json(createdUser.rows)
     } catch(err){
         console.log(err)
         next(err)   
@@ -56,7 +56,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
     try{
     const deletedUser = await db.result("DELETE FROM users WHERE id = $1", [req.params.id])
-    res.status(200).json({
+    res.json({
         "deltedUsers": deletedUser.rowCount,
         "message": "succesfully deleted user"
     })
@@ -70,7 +70,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         const userinfo = await db.one("SELECT password FROM users WHERE email = $1", [req.body.email]) 
         const match = await bcrypt.compare(req.body.password, userinfo.password);
         if(match){
-            res.status(200).json({
+            res.json({
                 "match": match,
                 "userinfo": userinfo
             })
