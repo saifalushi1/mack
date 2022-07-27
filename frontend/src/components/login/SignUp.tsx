@@ -1,9 +1,47 @@
+import axios from "axios"
+// import "dotenv/config"
+import { useState } from "react"
 import { Link } from "react-router-dom"
 import Header from "./Header"
+
 const fixedInputClass =
     "rounded-md appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
 
+interface ISignup {
+    firstName: string
+    lastName: string
+    username: string
+    email: string
+    password: string
+    confirmPassword: string
+}
+
 const SignUp = () => {
+    const [userSignup, setUserSignup] = useState<ISignup>({
+        firstName: "",
+        lastName: "",
+        username: "",
+        email: "",
+        password: "",
+        confirmPassword: ""
+    })
+    const [doPasswordsMatch, setDoPasswordsMatch] = useState<boolean>(true)
+    const apiURL = process.env.REACT_APP_USER_ENDPOINT
+    console.log(apiURL)
+    const handleSubmit = (): void => {
+        if (userSignup.password !== userSignup.confirmPassword) {
+            setDoPasswordsMatch(false)
+            return
+        } else {
+            setDoPasswordsMatch(true)
+            // axios.post()
+        }
+    }
+
+    const passwordsDontMatch = (): JSX.Element => {
+        return <p className="text-red-400">Passwords Do Not Match</p>
+    }
+    console.log(doPasswordsMatch)
     return (
         <>
             <div className="flex items-center justify-center h-screen min-h-full px-4 pb-6 sm:px-6 lg:px-8">
@@ -21,6 +59,13 @@ const SignUp = () => {
                                     type="text"
                                     placeholder="First Name"
                                     className={fixedInputClass}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                        setUserSignup((prevSignup) => ({
+                                            ...prevSignup,
+                                            firstName: e.target.value
+                                        }))
+                                    }}
+                                    maxLength={25}
                                     required
                                 ></input>
                             </div>
@@ -32,6 +77,13 @@ const SignUp = () => {
                                 type="text"
                                 placeholder="Last Name"
                                 className={fixedInputClass}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                    setUserSignup((prevSignup) => ({
+                                        ...prevSignup,
+                                        lastName: e.target.value
+                                    }))
+                                }}
+                                maxLength={40}
                                 required
                             ></input>
                         </div>
@@ -43,6 +95,12 @@ const SignUp = () => {
                                     type="text"
                                     placeholder="Username"
                                     className={fixedInputClass}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                        setUserSignup((prevSignup) => ({
+                                            ...prevSignup,
+                                            username: e.target.value
+                                        }))
+                                    }}
                                     required
                                 ></input>
                             </div>
@@ -56,6 +114,12 @@ const SignUp = () => {
                                     placeholder="Email Address"
                                     autoComplete="email"
                                     className={fixedInputClass}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                        setUserSignup((prevSignup) => ({
+                                            ...prevSignup,
+                                            email: e.target.value
+                                        }))
+                                    }}
                                     required
                                 ></input>
                             </div>
@@ -67,6 +131,12 @@ const SignUp = () => {
                                 type="password"
                                 placeholder="Password"
                                 className={fixedInputClass}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                    setUserSignup((prevSignup) => ({
+                                        ...prevSignup,
+                                        password: e.target.value
+                                    }))
+                                }}
                                 required
                             ></input>
                         </div>
@@ -77,13 +147,20 @@ const SignUp = () => {
                                 type="password"
                                 placeholder="Confirm Password"
                                 className={fixedInputClass}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                    setUserSignup((prevSignup) => ({
+                                        ...prevSignup,
+                                        confirmPassword: e.target.value
+                                    }))
+                                }}
                                 required
                             ></input>
+                            {doPasswordsMatch ? "" : passwordsDontMatch()}
                         </div>
                     </div>
                     <button
                         className="relative flex justify-center w-full px-4 py-2 mt-10 text-sm font-medium text-white bg-purple-600 border border-transparent rounded-md group hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
-                        onClick={() => ""}
+                        onClick={() => handleSubmit()}
                     >
                         Signup
                     </button>
