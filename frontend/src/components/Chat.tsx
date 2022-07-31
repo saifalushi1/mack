@@ -29,7 +29,6 @@ const Chat: React.FC<AppProps> = (props): JSX.Element => {
 
     useEffect(() => {
         joinRoom()
-        console.log("running")
     }, [])
 
     useEffect(() => {

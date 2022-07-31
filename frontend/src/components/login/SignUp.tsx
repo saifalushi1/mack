@@ -1,5 +1,4 @@
-import axios from "axios"
-// import "dotenv/config"
+import axios, { AxiosError } from "axios"
 import { useState } from "react"
 import { Link } from "react-router-dom"
 import Header from "./Header"
@@ -26,22 +25,28 @@ const SignUp = () => {
         confirmPassword: ""
     })
     const [doPasswordsMatch, setDoPasswordsMatch] = useState<boolean>(true)
-    const apiURL = process.env.REACT_APP_USER_ENDPOINT
-    console.log(apiURL)
-    const handleSubmit = (): void => {
+    const apiURL = process.env.REACT_APP_USER_ENDPOINT || "something went terribly wrong"
+    const handleSubmit = async () => {
         if (userSignup.password !== userSignup.confirmPassword) {
             setDoPasswordsMatch(false)
             return
         } else {
             setDoPasswordsMatch(true)
-            // axios.post()
+            try {
+                const trySign = await axios.post(`${apiURL}/signup`, userSignup)
+            } catch (err: Error | AxiosError) {
+                if (axios.isAxiosError(err))  {
+                    // Access to config, request, and response
+                  } else {
+                    // Just a stock error
+                  }
+            }
         }
     }
 
     const passwordsDontMatch = (): JSX.Element => {
         return <p className="text-red-400">Passwords Do Not Match</p>
     }
-    console.log(doPasswordsMatch)
     return (
         <>
             <div className="flex items-center justify-center h-screen min-h-full px-4 pb-6 sm:px-6 lg:px-8">

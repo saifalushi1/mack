@@ -20,8 +20,6 @@ const App = () => {
     useEffect(() => {
         socket.on("connect", () => {
             setConnected(true)
-            console.log(socket.connected) // true
-            console.log("connected")
         })
     }, [])
 
