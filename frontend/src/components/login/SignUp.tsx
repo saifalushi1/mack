@@ -34,12 +34,21 @@ const SignUp = () => {
             setDoPasswordsMatch(true)
             try {
                 const trySign = await axios.post(`${apiURL}/signup`, userSignup)
-            } catch (err: Error | AxiosError) {
-                if (axios.isAxiosError(err))  {
-                    // Access to config, request, and response
-                  } else {
-                    // Just a stock error
-                  }
+            } catch (err) {
+                // check if error is an axios error
+                if (axios.isAxiosError(err)) {
+                    if (!err?.response) {
+                        console.error("No Server Response")
+                    } else if (err.response?.status === 400) {
+                        console.error("Missing Username or Password")
+                    } else if (err.response?.status === 401) {
+                        console.error("Unauthorized")
+                    } else if (err.response?.status === 409) {
+                        console.error(err.response?.data)
+                    } else {
+                        console.error("Login Failed")
+                    }
+                }
             }
         }
     }
