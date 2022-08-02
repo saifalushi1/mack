@@ -1,16 +1,16 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import { Socket } from "socket.io";
 import dotenv from "dotenv";
 dotenv.config();
 import http from "http";
-const socketio = require("socket.io");
+const socketio = require("socket.io"); // eslint-disable-line
 import { formatMessage } from "./utils/message";
-import { userJoin, getCurrentUser, getRoomUsers, userLeave } from "./utils/users";
+import { userJoin, getCurrentUser, userLeave } from "./utils/users";
 import cors from "cors";
 
 const app = express();
-const server = http.createServer(app);
-const io = socketio(server, {
+const httpServer = http.createServer(app);
+const io = socketio(httpServer, {
     cors: {
         origin: "*"
     }
@@ -70,6 +70,6 @@ app.use("/user", userController);
 import messageController from "./controllers/messageController";
 app.use("/message", messageController);
 
-server.listen(PORT, () => {
+httpServer.listen(PORT, () => {
     console.log(`The application is listening on port ${PORT}!`);
 });
