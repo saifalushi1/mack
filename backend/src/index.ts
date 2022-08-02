@@ -26,7 +26,8 @@ io.on("connection", (socket: Socket) => {
     console.log("New Web Socket Connection");
 
     socket.on("joinRoom", (username, room) => {
-        const user = userJoin(parseInt(socket.id), username, room);
+        console.log(socket.id)
+        const user = userJoin(socket.id, username, room);
         socket.join(user.room.toString());
 
         socket.emit(
@@ -46,14 +47,14 @@ io.on("connection", (socket: Socket) => {
 
     // listen for chat message from client and send back the message
     socket.on("chatMessage", (msg) => {
-        const user = getCurrentUser(parseInt(socket.id));
+        const user = getCurrentUser(socket.id);
         io.to(user?.room).emit("message", formatMessage(user?.username, msg));
         console.log(msg);
     });
 
     // runs when client disconnects (to all other users )
     socket.on("disconnect", () => {
-        const user = userLeave(parseInt(socket.id));
+        const user = userLeave(socket.id);
         if (user.room !== -1) {
             io.to(user.room).emit(
                 "message",
