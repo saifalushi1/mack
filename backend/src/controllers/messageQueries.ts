@@ -1,5 +1,6 @@
-const db = require("../connection");
-require("dotenv").config();
+import db from "../connection";
+import dotenv from "dotenv";
+dotenv.config();
 import { Request, Response, NextFunction } from "express";
 
 const sendMessage = async (req: Request, res: Response, next: NextFunction) => {
@@ -13,7 +14,7 @@ const sendMessage = async (req: Request, res: Response, next: NextFunction) => {
             }
         );
         //Query sometimes does not read / input recipient_id from req.body DO NOT KNOW WHY!!!!
-        const receiver = await db.none(
+        await db.none(
             "INSERT INTO message_recipient (id, recipient_group_id, recipient_id, message_id) VALUES (DEFAULT, $<group_id>, $<recipient_id>, $<message>)",
             {
                 group_id: req.body.group_id,
@@ -38,7 +39,7 @@ const getAllMessagesFromUser = async (req: Request, res: Response, next: NextFun
             "SELECT message_id FROM message_recipient WHERE recipient_id = $1",
             [req.body.user]
         );
-        let arrMessageId = messageIds.map((n: { message_id: number }) => n.message_id);
+        const arrMessageId = messageIds.map((n: { message_id: number }) => n.message_id);
         const allMessages = await db.any(
             "SELECT * FROM messages WHERE creator_id = $1 AND id IN ( $2:list )",
             [req.body.sender, arrMessageId]
@@ -55,7 +56,7 @@ const getLastTenMessagesReceived = async (req: Request, res: Response, next: Nex
             "SELECT message_id FROM message_recipient WHERE recipient_id = $1 ORDER BY id DESC LIMIT 10",
             [req.params.id]
         );
-        let arrMessageId = lastMessageIds.map((n: { message_id: number }) => n.message_id);
+        const arrMessageId = lastMessageIds.map((n: { message_id: number }) => n.message_id);
         const lastTenMessages = await db.any("SELECT * FROM messages where id IN ( $1:list )", [
             arrMessageId
         ]);
@@ -77,9 +78,4 @@ const getLastTenMessagesSent = async (req: Request, res: Response, next: NextFun
     }
 };
 
-module.exports = {
-    sendMessage,
-    getLastTenMessagesReceived,
-    getAllMessagesFromUser,
-    getLastTenMessagesSent
-};
+export { sendMessage, getLastTenMessagesReceived, getAllMessagesFromUser, getLastTenMessagesSent };

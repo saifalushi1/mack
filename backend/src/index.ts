@@ -1,10 +1,11 @@
 import express, { Request, Response } from "express";
 import { Socket } from "socket.io";
-require("dotenv").config();
-const http = require("http");
+import dotenv from "dotenv";
+dotenv.config();
+import http from "http"
 const socketio = require("socket.io");
 const formatMessage = require("./utils/message");
-const { userJoin, getCurrentUser, getRoomUsers, userLeave } = require("./utils/users");
+import { userJoin, getCurrentUser, getRoomUsers, userLeave } from "./utils/users"
 const cors = require("cors");
 
 const app = express();
@@ -25,8 +26,8 @@ io.on("connection", (socket: Socket) => {
     console.log("New Web Socket Connection");
 
     socket.on("joinRoom", (username, room) => {
-        const user = userJoin(socket.id, username, room);
-        socket.join(user.room);
+        const user = userJoin(parseInt(socket.id), username, room);
+        socket.join(user.room.toString());
 
         socket.emit(
             "message",
@@ -45,14 +46,14 @@ io.on("connection", (socket: Socket) => {
 
     // listen for chat message from client and send back the message
     socket.on("chatMessage", (msg) => {
-        const user = getCurrentUser(socket.id);
-        io.to(user.room).emit("message", formatMessage(user.username, msg));
+        const user = getCurrentUser(parseInt(socket.id));
+        io.to(user?.room).emit("message", formatMessage(user?.username, msg));
         console.log(msg);
     });
 
     // runs when client disconnects (to all other users )
     socket.on("disconnect", () => {
-        const user = userLeave(socket.id);
+        const user = userLeave(parseInt(socket.id));
         if (user.room !== -1) {
             io.to(user.room).emit(
                 "message",

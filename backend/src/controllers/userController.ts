@@ -1,6 +1,6 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const userdb = require("./userQueries");
+import * as userdb from "./userQueries";
 
 router.get("/getall", userdb.getAllUsers);
 router.get("/getbyid/:id", userdb.getUserById);

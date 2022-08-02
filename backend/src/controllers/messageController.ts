@@ -1,4 +1,5 @@
-const messagedb = require("./messageQueries");
+// const messagedb = require("./messageQueries");
+import * as messagedb from "./messageQueries";
 import express from "express";
 const router = express.Router();
 

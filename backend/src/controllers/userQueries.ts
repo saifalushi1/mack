@@ -1,6 +1,6 @@
-const db = require("../connection");
+import db from "../connection";
 import { Request, Response, NextFunction } from "express";
-const bcrypt = require("bcrypt");
+import bcrypt from "bcrypt";
 
 const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -39,7 +39,6 @@ const getUserByUsername = async (req: Request, res: Response, next: NextFunction
 
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
     const { firstName, lastName, username, email, password } = req.body;
-    console.log("*************", firstName + " ************");
     try {
         const isUsernameTaken = await db.result("SELECT * FROM users WHERE username = $1", [
             username
@@ -97,12 +96,4 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
-module.exports = {
-    db,
-    getAllUsers,
-    getUserById,
-    getUserByUsername,
-    createUser,
-    deleteUser,
-    login
-};
+export { db, getAllUsers, getUserById, getUserByUsername, createUser, deleteUser, login };
