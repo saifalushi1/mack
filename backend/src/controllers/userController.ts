@@ -9,4 +9,4 @@ router.post("/signup", userdb.createUser);
 router.delete("/delete/:id", userdb.deleteUser);
 router.post("/login", userdb.login);
 
-module.exports = router;
+export default router;

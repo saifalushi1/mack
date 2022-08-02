@@ -5,7 +5,6 @@ const users: Array<{ id: string; username: string; room: number }> = [];
 // Join user to chat
 const userJoin = (id: string, username: string, room: number) => {
     const user = { id, username, room };
-    console.log(user)
     users.push(user);
     return user;
 };
@@ -31,9 +30,4 @@ const getRoomUsers = (room: number) => {
     return users.filter((user) => user.room === room);
 };
 
-export {
-    userJoin,
-    getCurrentUser,
-    userLeave,
-    getRoomUsers
-};
+export { userJoin, getCurrentUser, userLeave, getRoomUsers };

@@ -2,11 +2,11 @@ import express, { Request, Response } from "express";
 import { Socket } from "socket.io";
 import dotenv from "dotenv";
 dotenv.config();
-import http from "http"
+import http from "http";
 const socketio = require("socket.io");
-const formatMessage = require("./utils/message");
-import { userJoin, getCurrentUser, getRoomUsers, userLeave } from "./utils/users"
-const cors = require("cors");
+import { formatMessage } from "./utils/message";
+import { userJoin, getCurrentUser, getRoomUsers, userLeave } from "./utils/users";
+import cors from "cors";
 
 const app = express();
 const server = http.createServer(app);
@@ -26,7 +26,6 @@ io.on("connection", (socket: Socket) => {
     console.log("New Web Socket Connection");
 
     socket.on("joinRoom", (username, room) => {
-        console.log(socket.id)
         const user = userJoin(socket.id, username, room);
         socket.join(user.room.toString());
 
@@ -48,7 +47,7 @@ io.on("connection", (socket: Socket) => {
     // listen for chat message from client and send back the message
     socket.on("chatMessage", (msg) => {
         const user = getCurrentUser(socket.id);
-        io.to(user?.room).emit("message", formatMessage(user?.username, msg));
+        io.to(user?.room).emit("message", formatMessage(user?.username || "no user found", msg));
         console.log(msg);
     });
 
@@ -65,10 +64,10 @@ io.on("connection", (socket: Socket) => {
     });
 });
 
-const userController = require("./controllers/userController");
+import userController from "./controllers/userController";
 app.use("/user", userController);
 
-const messageController = require("./controllers/messageController");
+import messageController from "./controllers/messageController";
 app.use("/message", messageController);
 
 server.listen(PORT, () => {

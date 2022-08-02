@@ -32,7 +32,7 @@ const getUserByUsername = async (req: Request, res: Response, next: NextFunction
         );
         res.json(userByUsername);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         next(err);
     }
 };
