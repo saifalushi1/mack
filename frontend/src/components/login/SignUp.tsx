@@ -25,7 +25,7 @@ const SignUp = () => {
         confirmPassword: ""
     })
     const [doPasswordsMatch, setDoPasswordsMatch] = useState<boolean>(true)
-    const apiURL = process.env.REACT_APP_USER_ENDPOINT || "something went terribly wrong"
+    const apiURL = process.env.REACT_APP_USER_ENDPOINT!
     const handleSubmit = async () => {
         if (userSignup.password !== userSignup.confirmPassword) {
             setDoPasswordsMatch(false)
@@ -35,7 +35,6 @@ const SignUp = () => {
             try {
                 const trySign = await axios.post(`${apiURL}/signup`, userSignup)
             } catch (err) {
-                // check if error is an axios error
                 if (axios.isAxiosError(err)) {
                     if (!err?.response) {
                         console.error("No Server Response")

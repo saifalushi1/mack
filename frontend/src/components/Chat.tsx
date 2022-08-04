@@ -25,6 +25,7 @@ const Chat: React.FC<AppProps> = (props): JSX.Element => {
 
     const joinRoom = () => {
         socket.emit("joinRoom", props.user.username, roomNumber.toString())
+        console.log("joining room")
     }
 
     useEffect(() => {
