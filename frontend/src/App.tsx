@@ -7,6 +7,7 @@ import Navigation from "./components/Navigation"
 import SignUp from "./components/login/SignUp"
 import LoginPage from "./components/login/LoginPage"
 import axios from "axios"
+axios.defaults.withCredentials = true
 
 export interface Iuser {
     username: string
@@ -28,14 +29,10 @@ const App = () => {
     }, [])
     const test = async () => {
         try {
-            const x = await axios.post(
-                "http://localhost:8000/user/login",
-                {
-                    email: "saif@gmail.com",
-                    password: "123"
-                },
-                { withCredentials: true }
-            )
+            const x = await axios.post("http://localhost:8000/user/login", {
+                email: "saif@gmail.com",
+                password: "123"
+            })
             console.log(x)
         } catch (e) {
             console.error(e)
@@ -43,9 +40,7 @@ const App = () => {
     }
     const test2 = async () => {
         try {
-            const x = await axios.post("http://localhost:8000/user/logout", {
-                withCredentials: true
-            })
+            const x = await axios.post("http://localhost:8000/user/logout")
             console.log(x)
         } catch (e) {
             console.error(e)
