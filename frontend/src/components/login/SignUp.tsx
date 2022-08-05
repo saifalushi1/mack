@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios"
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import Header from "./Header"
 
 const fixedInputClass =
@@ -16,6 +16,7 @@ interface ISignup {
 }
 
 const SignUp = () => {
+    const navigate = useNavigate()
     const [userSignup, setUserSignup] = useState<ISignup>({
         firstName: "",
         lastName: "",
@@ -25,6 +26,8 @@ const SignUp = () => {
         confirmPassword: ""
     })
     const [doPasswordsMatch, setDoPasswordsMatch] = useState<boolean>(true)
+    const [userError, setUserError] = useState<boolean>(false)
+
     const apiURL = process.env.REACT_APP_USER_ENDPOINT!
     const handleSubmit = async () => {
         if (userSignup.password !== userSignup.confirmPassword) {
@@ -33,19 +36,23 @@ const SignUp = () => {
         } else {
             setDoPasswordsMatch(true)
             try {
-                const trySign = await axios.post(`${apiURL}/signup`, userSignup)
+                setUserError(false)
+                await axios.post(`${apiURL}/signup`, userSignup)
+                navigate("/")
             } catch (err) {
                 if (axios.isAxiosError(err)) {
                     if (!err?.response) {
                         console.error("No Server Response")
                     } else if (err.response?.status === 400) {
-                        console.error("Missing Username or Password")
+                        setUserError(true)
+                        console.error("Missing Field")
                     } else if (err.response?.status === 401) {
                         console.error("Unauthorized")
                     } else if (err.response?.status === 409) {
+                        setUserError(true)
                         console.error(err.response?.data)
                     } else {
-                        console.error("Login Failed")
+                        console.error("Signup Failed")
                     }
                 }
             }
@@ -55,6 +62,18 @@ const SignUp = () => {
     const passwordsDontMatch = (): JSX.Element => {
         return <p className="text-red-400">Passwords Do Not Match</p>
     }
+    const showUserError = (): JSX.Element => {
+        return <p className="text-red-400">Please Fill Out Every Feild</p>
+    }
+    // const checkFormat = () => {
+    //     let invalid
+    //     Object.entries(userSignup).find(([key, value]) => {
+    //         if (value.includes(" ")) {
+    //             invalid = key
+    //             return <p className="text-red-400">{invalid} must not contain any spaces</p>
+    //         }
+    //     })
+    // }
     return (
         <>
             <div className="flex items-center justify-center h-screen min-h-full px-4 pb-6 sm:px-6 lg:px-8">
@@ -169,6 +188,7 @@ const SignUp = () => {
                                 required
                             ></input>
                             {doPasswordsMatch ? "" : passwordsDontMatch()}
+                            {userError === false ? "" : showUserError()}
                         </div>
                     </div>
                     <button

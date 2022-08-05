@@ -7,20 +7,24 @@ const socketio = require("socket.io"); // eslint-disable-line
 import { formatMessage } from "./utils/message";
 import { userJoin, getCurrentUser, userLeave } from "./utils/users";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 const app = express();
 const httpServer = http.createServer(app);
 const io = socketio(httpServer, {
     cors: {
-        origin: "*"
+        origin: "http://localhost:3000"
+        // origin: "*"
     }
 });
 const bot = "Mack Bot";
 const PORT = process.env.PORT || 8000;
 
+app.set("trust proxy", 1);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(cookieParser());
 
 io.on("connection", (socket: Socket) => {
     console.log("New Web Socket Connection");

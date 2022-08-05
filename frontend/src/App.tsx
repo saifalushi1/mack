@@ -7,7 +7,7 @@ import Navigation from "./components/Navigation"
 import SignUp from "./components/login/SignUp"
 import LoginPage from "./components/login/LoginPage"
 import axios from "axios"
-axios.defaults.withCredentials = true
+// axios.defaults.withCredentials = true
 
 export interface Iuser {
     username: string
@@ -23,33 +23,10 @@ const App = () => {
         socket.on("connect", () => {
             setConnected(true)
         })
-
-        test()
-        // const cookiePlease = document.cookie.split('; ').find(row => row.startsWith('acess_token=')).split('=')[1];
     }, [])
-    const test = async () => {
-        try {
-            const x = await axios.post("http://localhost:8000/user/login", {
-                email: "saif@gmail.com",
-                password: "123"
-            })
-            console.log(x)
-        } catch (e) {
-            console.error(e)
-        }
-    }
-    const test2 = async () => {
-        try {
-            const x = await axios.post("http://localhost:8000/user/logout")
-            console.log(x)
-        } catch (e) {
-            console.error(e)
-        }
-    }
 
     return (
         <>
-            <button onClick={() => test2()}>click</button>
             <Navigation />
             <Routes>
                 <Route path="/" element={<LoginPage />} />

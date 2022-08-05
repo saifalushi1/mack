@@ -1,11 +1,13 @@
 import db from "../connection";
 import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const users = await db.any("SELECT * FROM users");
-        res.json(users);
+        const cookie = req.headers.cookie;
+        res.json({ users: users, cookie: cookie });
     } catch (err) {
         next(err);
     }
@@ -39,6 +41,8 @@ const getUserByUsername = async (req: Request, res: Response, next: NextFunction
 
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
     const { firstName, lastName, username, email, password } = req.body;
+    if (!firstName || !lastName || !username || !email || !password)
+        res.status(400).json({ error: "Missing field" });
     try {
         const isUsernameTaken = await db.result("SELECT * FROM users WHERE username = $1", [
             username
@@ -82,18 +86,41 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
 
 const login = async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
+    if (!email || !password) res.status(400).json({ error: "Must provide email and password" });
     try {
-        const userinfo = await db.one("SELECT password FROM users WHERE email = $1", [email]);
-        const match = await bcrypt.compare(password, userinfo.password);
-        if (match) {
-            res.json({
-                match: match,
-                userinfo: userinfo
-            });
+        const doesUserExist = await db.result("SELECT * FROM users WHERE email = $1", [email]);
+
+        if (doesUserExist.rowCount === 0) {
+            return res.status(401).json({ error: "incorrect email or password" });
         }
+
+        const userinfo = await db.one("SELECT * FROM users WHERE email = $1", [email]);
+        const match = await bcrypt.compare(password, userinfo.password);
+
+        if (!match) res.status(401).json({ error: "incorrect email or password" });
+
+        const token = jwt.sign(
+            { id: userinfo.id, username: userinfo.username },
+            process.env.SECRET!
+        );
+        
+        res.cookie("access_token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production"
+            // secure: true
+        }).json({
+            match: match,
+            // userinfo: { id: userinfo.id, username: userinfo.username}
+            userinfo: userinfo
+        });
     } catch (err) {
         next(err);
     }
 };
 
-export { db, getAllUsers, getUserById, getUserByUsername, createUser, deleteUser, login };
+const logout = (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.headers.cookie);
+    return res.clearCookie("access_token").status(200).json({ message: "Successfully logged out" });
+};
+
+export { db, getAllUsers, getUserById, getUserByUsername, createUser, deleteUser, login, logout };
