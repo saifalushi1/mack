@@ -1,9 +1,25 @@
 import { Link } from "react-router-dom"
 import { useState } from "react"
+import axios from "axios"
+import { useNavigate } from "react-router-dom"
 import "../styling/nav.css"
+axios.defaults.withCredentials = true
 
-const Navigation = () => {
+interface IProps {
+    loggedIn: boolean
+}
+
+const Navigation: React.FC<IProps> = ({ loggedIn }): JSX.Element => {
     const [isNavExpanded, setIsNavExpanded] = useState(false)
+    const logout = async () => {
+        const apiURL = process.env.REACT_APP_USER_ENDPOINT!
+        try{
+
+        }catch(err){
+            
+        }
+        await axios.post(`${apiURL}/logout`)
+    }
     return (
         <>
             <nav className="navigation">
