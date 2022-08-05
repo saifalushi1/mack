@@ -28,10 +28,14 @@ const App = () => {
     }, [])
     const test = async () => {
         try {
-            const x = await axios.post("http://localhost:8000/user/login", {
-                email: "saif@gmail.com",
-                password: "123"
-            })
+            const x = await axios.post(
+                "http://localhost:8000/user/login",
+                {
+                    email: "saif@gmail.com",
+                    password: "123"
+                },
+                { withCredentials: true }
+            )
             console.log(x)
         } catch (e) {
             console.error(e)
@@ -40,12 +44,9 @@ const App = () => {
     const test2 = async () => {
         try {
             const x = await axios.post("http://localhost:8000/user/logout", {
-                withCredentials: true,
-                headers: {
-                    "Content-Type": "application/json"
-                }
+                withCredentials: true
             })
-            console.log(x.data)
+            console.log(x)
         } catch (e) {
             console.error(e)
         }
