@@ -1,92 +1,126 @@
-const db = require("../connection")
-import { Request, Response, NextFunction } from "express"
-const bcrypt = require('bcrypt')
-
+import db from "../connection";
+import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
-    try{
-        const users = await db.any("SELECT * FROM users")
-        res.status(200).json(users)
-    } catch(err) {
-        next(err)
+    try {
+        const users = await db.any("SELECT * FROM users");
+        const cookie = req.headers.cookie;
+        res.json({ users: users, cookie: cookie });
+    } catch (err) {
+        next(err);
     }
-}
+};
 
 const getUserById = async (req: Request, res: Response, next: NextFunction) => {
-    try{
-        const userById = await db.one("SELECT * FROM users WHERE id = $1", [req.params.id])
-        console.log(userById)
-        res.status(200).json(userById)
-    } catch(err){
-        console.log(err)
-        next(err)
+    const { id } = req.params;
+    try {
+        const userById = await db.one("SELECT * FROM users WHERE id = $1", [id]);
+        res.json(userById);
+    } catch (err) {
+        next(err);
     }
-}
+};
 
 const getUserByUsername = async (req: Request, res: Response, next: NextFunction) => {
-    try{
+    const { username } = req.params;
+    try {
         //When using like and passing special characters such as % you must use this format EXAMPLE:\'%$1#%\'
         //When passing a variable the library expects a string. So if it needs to be dynamic use `${}`
-        const userByUsername = await db.any('SELECT * FROM users WHERE username LIKE \'$1#%\'', `${req.params.username}`)
-        console.log(userByUsername)
-        res.status(200).json(userByUsername)
-    } catch(err){
-        console.log(err)    
-        next(err)
+        const userByUsername = await db.any(
+            "SELECT * FROM users WHERE username LIKE '$1#%'",
+            `${username}`
+        );
+        res.json(userByUsername);
+    } catch (err) {
+        console.error(err);
+        next(err);
     }
-}
+};
 
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
-    try{
-        const createdUser = await db.result("INSERT INTO users (id, username, password, email, first_name, last_name, created_on, is_active) VALUES(DEFAULT, $<username>, $<password>, $<email>, $<name.first>, $<name.last>, current_timestamp, 0) RETURNING id", 
-        {
-            username: req.body.username,
-            password: await bcrypt.hash(req.body.password, 10),
-            email: req.body.email,
-            name: {first: req.body.firstname, last: req.body.lastname}, 
+    const { firstName, lastName, username, email, password } = req.body;
+    if (!firstName || !lastName || !username || !email || !password)
+        res.status(400).json({ error: "Missing field" });
+    try {
+        const isUsernameTaken = await db.result("SELECT * FROM users WHERE username = $1", [
+            username
+        ]);
+        const isEmailTaken = await db.result("SELECT * FROM users WHERE email = $1", [email]);
+
+        if (isUsernameTaken.rowCount > 0) {
+            res.status(409).json({ error: "Username already taken" });
         }
-        )
-        res.status(200).json(createdUser.rows)
-    } catch(err){
-        console.log(err)
-        next(err)   
+        if (isEmailTaken.rowCount > 0) {
+            res.status(409).json({ error: "Email already taken" });
+        }
+
+        const createdUser = await db.result(
+            "INSERT INTO users (id, username, password, email, first_name, last_name, created_on, is_active) VALUES(DEFAULT, $<username>, $<password>, $<email>, $<name.first>, $<name.last>, current_timestamp, 0) RETURNING id",
+            {
+                username: username,
+                password: await bcrypt.hash(password, 10),
+                email: email,
+                name: { first: firstName, last: lastName }
+            }
+        );
+        res.json({ createdUser: createdUser.rows });
+    } catch (err) {
+        console.log(err);
+        next(err);
     }
-}
+};
 
 const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
-    try{
-    const deletedUser = await db.result("DELETE FROM users WHERE id = $1", [req.params.id])
-    res.status(200).json({
-        "deltedUsers": deletedUser.rowCount,
-        "message": "succesfully deleted user"
-    })
-    } catch(err){
-        next(err)
+    try {
+        const deletedUser = await db.result("DELETE FROM users WHERE id = $1", [req.params.id]);
+        res.json({
+            deltedUsers: deletedUser.rowCount,
+            message: "succesfully deleted user"
+        });
+    } catch (err) {
+        next(err);
     }
-}
+};
 
 const login = async (req: Request, res: Response, next: NextFunction) => {
-    try{
-        const userinfo = await db.one("SELECT password FROM users WHERE email = $1", [req.body.email]) 
-        const match = await bcrypt.compare(req.body.password, userinfo.password);
-        if(match){
-            res.status(200).json({
-                "match": match,
-                "userinfo": userinfo
-            })
+    const { email, password } = req.body;
+    if (!email || !password) res.status(400).json({ error: "Must provide email and password" });
+    try {
+        const doesUserExist = await db.result("SELECT * FROM users WHERE email = $1", [email]);
+
+        if (doesUserExist.rowCount === 0) {
+            return res.status(401).json({ error: "incorrect email or password" });
         }
 
-    } catch(err){
-        next(err)
-    }
-}
+        const userinfo = await db.one("SELECT * FROM users WHERE email = $1", [email]);
+        const match = await bcrypt.compare(password, userinfo.password);
 
-module.exports = {
-    db,
-    getAllUsers,
-    getUserById,
-    getUserByUsername,
-    createUser,
-    deleteUser,
-    login,
-}
+        if (!match) res.status(401).json({ error: "incorrect email or password" });
+
+        const token = jwt.sign(
+            { id: userinfo.id, username: userinfo.username },
+            process.env.SECRET!
+        );
+        
+        res.cookie("access_token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production"
+            // secure: true
+        }).json({
+            match: match,
+            // userinfo: { id: userinfo.id, username: userinfo.username}
+            userinfo: userinfo
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+const logout = (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.headers.cookie);
+    return res.clearCookie("access_token").status(200).json({ message: "Successfully logged out" });
+};
+
+export { db, getAllUsers, getUserById, getUserByUsername, createUser, deleteUser, login, logout };

@@ -7,19 +7,18 @@ const Navigation = () => {
     return (
         <>
             <nav className="navigation">
-                <a href="/" className="brand-name">
+                <Link to="/chat" className="brand-name">
                     Mack
-                </a>
+                </Link>
                 <button
                     className="hamburger"
                     onClick={() => {
                         setIsNavExpanded(!isNavExpanded)
                     }}
                 >
-                    {/* icon from heroicons.com */}
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
+                        className="w-5 h-5"
                         viewBox="0 0 20 20"
                         fill="white"
                     >

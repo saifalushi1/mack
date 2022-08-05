@@ -1,13 +1,14 @@
-const express = require("express")
-const router = express.Router()
-const userdb = require("./userQueries")
+import express from "express";
+const router = express.Router();
+import * as userdb from "./userQueries";
+import authorization from "../middleware/authorization";
 
-router.get("/getall", userdb.getAllUsers)
-router.get("/getbyid/:id", userdb.getUserById)
-router.get("/getbyusername/:username", userdb.getUserByUsername)
-router.post("/signup", userdb.createUser)
-router.delete("/delete/:id", userdb.deleteUser)
-router.post("/login", userdb.login)
+router.get("/getall", authorization, userdb.getAllUsers);
+router.get("/getbyid/:id", authorization, userdb.getUserById);
+router.get("/getbyusername/:username", authorization, userdb.getUserByUsername);
+router.post("/signup", userdb.createUser);
+router.delete("/delete/:id", authorization, userdb.deleteUser);
+router.post("/login", userdb.login);
+router.post("/logout", authorization, userdb.logout);
 
-
-module.exports = router
+export default router;

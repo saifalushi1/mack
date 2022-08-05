@@ -1,5 +1,7 @@
-require('dotenv').config()
-const pgp = require('pg-promise')(/* options */)
-const db = pgp(process.env.DBSTRING)
+import dotenv from "dotenv";
+dotenv.config();
+import pgPromise from "pg-promise";
+const pgp = pgPromise({});
+const db = pgp(process.env.DBSTRING!);
 
-module.exports = db
+export default db;
