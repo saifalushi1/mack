@@ -4,7 +4,7 @@
 <br />
 
 ### What Purpose Does Mack Serve?
---Not much if im being honest. I used this project to learn TypeScript, WebSockets, and improve my SQL queries.--
+~~Not much if im being honest. I used this project to learn TypeScript, WebSockets, and improve my SQL queries.~~<br />
 Mack is going to take over the world and be the worlds first non-invasive chat app <br />
 
 ### Future Goals
