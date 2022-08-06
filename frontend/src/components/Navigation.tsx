@@ -11,12 +11,26 @@ interface IProps {
 
 const Navigation: React.FC<IProps> = ({ loggedIn }): JSX.Element => {
     const [isNavExpanded, setIsNavExpanded] = useState(false)
-    const logout = async () => {
+    const logout = async (): Promise<void> => {
         const apiURL = process.env.REACT_APP_USER_ENDPOINT!
-        try{
-
-        }catch(err){
-            
+        try {
+            //logout requires userID add context to pass the user info around
+            await axios.post(`${apiURL}/logout`, { id: 1 })
+        } catch (err) {
+            if (axios.isAxiosError(err)) {
+                if (!err?.response) {
+                    console.error("No Server Response")
+                } else if (err.response?.status === 400) {
+                    // setUserError(true)
+                    // console.error("Missing Field")
+                    console.error(err.response?.data)
+                } else if (err.response?.status === 401) {
+                    // setUserError(true)
+                    console.error(err.response?.data)
+                } else {
+                    console.error("Login Failed")
+                }
+            }
         }
         await axios.post(`${apiURL}/logout`)
     }

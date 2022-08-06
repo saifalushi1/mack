@@ -20,15 +20,15 @@ const LoginPage = () => {
     const [userLogin, setUserLogin] = useState<IUserLogin>({ email: "", password: "" })
     const [userError, setUserError] = useState<IUserError>({ isError: false, errorMessage: "" })
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (): Promise<void> => {
         const apiURL = process.env.REACT_APP_USER_ENDPOINT!
 
         try {
-            const x = await axios.post(`${apiURL}/login`, {
+            const loginData = await axios.post(`${apiURL}/login`, {
                 email: userLogin.email,
                 password: userLogin.password
             })
-            console.log(x)
+            console.log(loginData)
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 if (!err?.response) {

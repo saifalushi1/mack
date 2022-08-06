@@ -99,27 +99,34 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
         if (!match) res.status(401).json({ error: "incorrect email or password" });
 
+        await db.none("UPDATE users SET is_active = 1 WHERE id = $1", [userinfo.id]);
+
         const token = jwt.sign(
             { id: userinfo.id, username: userinfo.username },
             process.env.SECRET!
         );
-        
+
         res.cookie("access_token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production"
             // secure: true
         }).json({
             match: match,
-            // userinfo: { id: userinfo.id, username: userinfo.username}
-            userinfo: userinfo
+            userinfo: {
+                id: userinfo.id,
+                username: userinfo.username,
+                email: userinfo.email,
+                firstName: userinfo.first_name,
+                lastName: userinfo.last_name
+            }
         });
     } catch (err) {
         next(err);
     }
 };
 
-const logout = (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.headers.cookie);
+const logout = async (req: Request, res: Response, next: NextFunction) => {
+    await db.none("UPDATE users SET is_active = 0 WHERE id = $1", [req.body.id]);
     return res.clearCookie("access_token").status(200).json({ message: "Successfully logged out" });
 };
 

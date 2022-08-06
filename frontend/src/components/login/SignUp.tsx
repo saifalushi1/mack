@@ -29,7 +29,7 @@ const SignUp = () => {
     const [userError, setUserError] = useState<boolean>(false)
 
     const apiURL = process.env.REACT_APP_USER_ENDPOINT!
-    const handleSubmit = async () => {
+    const handleSubmit = async (): Promise<void> => {
         if (userSignup.password !== userSignup.confirmPassword) {
             setDoPasswordsMatch(false)
             return
