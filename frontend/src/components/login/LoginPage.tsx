@@ -1,7 +1,9 @@
-import { useState } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
 import Header from "./Header"
+import { Iuser } from "../../App"
+
 axios.defaults.withCredentials = true
 const fixedInputClass =
     "rounded-md appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
@@ -16,7 +18,12 @@ interface IUserError {
     errorMessage: string
 }
 
-const LoginPage = () => {
+interface IProps {
+    setUser: Dispatch<SetStateAction<Iuser>>
+}
+
+const LoginPage = ({ setUser }: IProps) => {
+    const navigate = useNavigate()
     const [userLogin, setUserLogin] = useState<IUserLogin>({ email: "", password: "" })
     const [userError, setUserError] = useState<IUserError>({ isError: false, errorMessage: "" })
 
@@ -28,7 +35,8 @@ const LoginPage = () => {
                 email: userLogin.email,
                 password: userLogin.password
             })
-            console.log(loginData)
+            setUser(loginData.data.userinfo)
+            navigate("/chat")
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 if (!err?.response) {
