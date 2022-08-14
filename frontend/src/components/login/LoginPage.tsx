@@ -27,10 +27,15 @@ const LoginPage = ({ setUser }: IProps) => {
     const [userLogin, setUserLogin] = useState<IUserLogin>({ email: "", password: "" })
     const [userError, setUserError] = useState<IUserError>({ isError: false, errorMessage: "" })
 
+    const showUserError = (): JSX.Element => {
+        return <p className="text-red-400">{userError.errorMessage}</p>
+    }
+
     const handleSubmit = async (): Promise<void> => {
         const apiURL = process.env.REACT_APP_USER_ENDPOINT!
 
         try {
+            setUserError((prevState) => ({ ...prevState, isError: false }))
             const loginData = await axios.post(`${apiURL}/login`, {
                 email: userLogin.email,
                 password: userLogin.password
@@ -39,16 +44,32 @@ const LoginPage = ({ setUser }: IProps) => {
             navigate("/chat")
         } catch (err) {
             if (axios.isAxiosError(err)) {
+                setUserError((prevState) => ({ ...prevState, isError: true }))
                 if (!err?.response) {
                     console.error("No Server Response")
-                } else if (err.response?.status === 400) {
-                    // setUserError(true)
-                    // console.error("Missing Field")
-                    console.error(err.response?.data)
                 } else if (err.response?.status === 401) {
-                    // setUserError(true)
+                    setUserError((prevState) => ({
+                        ...prevState,
+                        errorMessage: "Incorrect username or password"
+                    }))
+                    console.error(err.response?.data)
+                } else if (err.response?.status === 404) {
+                    setUserError((prevState) => ({
+                        ...prevState,
+                        errorMessage: "No account found"
+                    }))
+                    console.error(err.response?.data)
+                } else if (err.response?.status === 400) {
+                    setUserError((prevState) => ({
+                        ...prevState,
+                        errorMessage: "Must enter email and password"
+                    }))
                     console.error(err.response?.data)
                 } else {
+                    setUserError((prevState) => ({
+                        ...prevState,
+                        errorMessage: "login Failed"
+                    }))
                     console.error("Login Failed")
                 }
             }
@@ -98,6 +119,7 @@ const LoginPage = ({ setUser }: IProps) => {
                                 }}
                                 required
                             ></input>
+                            {userError.isError === false ? "" : showUserError()}
                         </div>
                     </div>
                     <div className="flex items-center justify-between ">

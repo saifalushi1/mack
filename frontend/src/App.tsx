@@ -33,15 +33,14 @@ const App = () => {
             setConnected(true)
         })
 
-        window.onbeforeunload = function() {
+        window.onbeforeunload = function () {
             x = 2
-            return true;
-        };
-    
-        return () => {
-            window.onbeforeunload = null;
-        };
+            return true
+        }
 
+        return () => {
+            window.onbeforeunload = null
+        }
     }, [])
     console.log(user)
     return (

@@ -91,13 +91,13 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         const doesUserExist = await db.result("SELECT * FROM users WHERE email = $1", [email]);
 
         if (doesUserExist.rowCount === 0) {
-            return res.status(401).json({ error: "incorrect email or password" });
+            return res.status(404).json({ error: "No account found" });
         }
 
         const userinfo = await db.one("SELECT * FROM users WHERE email = $1", [email]);
         const match = await bcrypt.compare(password, userinfo.password);
 
-        if (!match) res.status(401).json({ error: "incorrect email or password" });
+        if (!match) return res.status(401).json({ error: "Incorrect email or password" });
 
         await db.none("UPDATE users SET is_active = 1 WHERE id = $1", [userinfo.id]);
 
@@ -109,7 +109,6 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         res.cookie("access_token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production"
-            // secure: true
         }).json({
             match: match,
             userinfo: {
