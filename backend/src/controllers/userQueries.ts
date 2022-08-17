@@ -3,46 +3,47 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
-const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
+const getAllUsers = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const users = await db.any("SELECT * FROM users");
         const cookie = req.headers.cookie;
-        res.json({ users: users, cookie: cookie });
+        return res.json({ users: users, cookie: cookie });
     } catch (err) {
         next(err);
     }
 };
 
-const getUserById = async (req: Request, res: Response, next: NextFunction) => {
+const getUserById = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     const { id } = req.params;
     try {
         const userById = await db.one("SELECT * FROM users WHERE id = $1", [id]);
-        res.json(userById);
+        return res.json(userById);
     } catch (err) {
         next(err);
     }
 };
 
-const getUserByUsername = async (req: Request, res: Response, next: NextFunction) => {
+const getUserByUsername = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     const { username } = req.params;
     try {
-        //When using like and passing special characters such as % you must use this format EXAMPLE:\'%$1#%\'
+        //When using like and passing special characters such as % you must use this format EXAMPLE: \'%$1#%\'
         //When passing a variable the library expects a string. So if it needs to be dynamic use `${}`
         const userByUsername = await db.any(
             "SELECT * FROM users WHERE username LIKE '$1#%'",
             `${username}`
         );
-        res.json(userByUsername);
+        return res.json(userByUsername);
     } catch (err) {
         console.error(err);
         next(err);
     }
 };
 
-const createUser = async (req: Request, res: Response, next: NextFunction) => {
+const createUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     const { firstName, lastName, username, email, password } = req.body;
-    if (!firstName || !lastName || !username || !email || !password)
-        res.status(400).json({ error: "Missing field" });
+    if (!firstName || !lastName || !username || !email || !password) {
+        return res.status(400).json({ error: "Missing field" });
+    }
     try {
         const isUsernameTaken = await db.result("SELECT * FROM users WHERE username = $1", [
             username
@@ -50,10 +51,10 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
         const isEmailTaken = await db.result("SELECT * FROM users WHERE email = $1", [email]);
 
         if (isUsernameTaken.rowCount > 0) {
-            res.status(409).json({ error: "Username already taken" });
+            return res.status(409).json({ error: "Username already taken" });
         }
         if (isEmailTaken.rowCount > 0) {
-            res.status(409).json({ error: "Email already taken" });
+            return res.status(409).json({ error: "Email already taken" });
         }
 
         const createdUser = await db.result(
@@ -65,7 +66,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
                 name: { first: firstName, last: lastName }
             }
         );
-        res.json({ createdUser: createdUser.rows });
+        return res.json({ createdUser: createdUser.rows });
     } catch (err) {
         console.log(err);
         next(err);
@@ -86,7 +87,9 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
 
 const login = async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
-    if (!email || !password) res.status(400).json({ error: "Must provide email and password" });
+    if (!email || !password) {
+        return res.status(400).json({ error: "Must provide email and password" });
+    }
     try {
         const doesUserExist = await db.result("SELECT * FROM users WHERE email = $1", [email]);
 
@@ -97,7 +100,9 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         const userinfo = await db.one("SELECT * FROM users WHERE email = $1", [email]);
         const match = await bcrypt.compare(password, userinfo.password);
 
-        if (!match) return res.status(401).json({ error: "Incorrect email or password" });
+        if (!match) {
+            return res.status(401).json({ error: "Incorrect email or password" });
+        }
 
         await db.none("UPDATE users SET is_active = 1 WHERE id = $1", [userinfo.id]);
 

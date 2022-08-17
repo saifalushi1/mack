@@ -26,23 +26,13 @@ const App = () => {
         firstName: "",
         lastName: ""
     })
-    let x = 1
 
     useEffect(() => {
         socket.on("connect", () => {
             setConnected(true)
         })
-
-        window.onbeforeunload = function () {
-            x = 2
-            return true
-        }
-
-        return () => {
-            window.onbeforeunload = null
-        }
     }, [])
-    console.log(user)
+
     return (
         <>
             <Navigation loggedIn={LoggedIn} />

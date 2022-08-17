@@ -33,6 +33,8 @@ const SignUp = () => {
         if (userSignup.password !== userSignup.confirmPassword) {
             setDoPasswordsMatch(false)
             return
+        } else if (userSignup.username.includes(" ")) {
+            console.log("yo")
         } else {
             setDoPasswordsMatch(true)
             try {
