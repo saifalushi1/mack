@@ -134,21 +134,18 @@ const logout = async (req: Request, res: Response, next: NextFunction) => {
     return res.clearCookie("access_token").status(200).json({ message: "Successfully logged out" });
 };
 
-const getFriends = async (req: Request, res: Response, next: NextFunction) => {
+const getAllFriends = async (req: Request, res: Response, next: NextFunction) => {
     const friendsList = await db.any(
-        "SELECT a.username, b.username FROM friends JOIN users a ON a.id = user_a JOIN users b ON b.id = user_b ORDER BY a.username, b.username;"
+        "SELECT a.username, b.username FROM friends JOIN users a ON a.id = user_a JOIN users b ON b.id = user_b ORDER BY a.username, b.username"
     );
     return res.json({ test: friendsList });
 };
 
-export {
-    db,
-    getAllUsers,
-    getUserById,
-    getUserByUsername,
-    createUser,
-    deleteUser,
-    login,
-    logout,
-    getFriends
+const getUserFriends = async (req: Request, res: Response, next: NextFunction) => {
+    const friendsList = await db.any(
+        "SELECT a.username, b.username FROM friends JOIN users a ON a.id = 2 JOIN users b ON b.id = user_b ORDER BY a.username, b.username"
+    );
+    return res.json({ test: friendsList });
 };
+
+export { db, getAllUsers, getUserById, getUserByUsername, createUser, deleteUser, login, logout };
