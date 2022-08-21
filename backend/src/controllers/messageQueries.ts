@@ -4,26 +4,41 @@ dotenv.config();
 import { Request, Response, NextFunction } from "express";
 
 const sendMessage = async (req: Request, res: Response, next: NextFunction) => {
+    const { creatorId, userMessage, groupId, recipientId } = req.body;
+    let parentId;
+
     try {
+        const lastMessageSentToRecipient = await db.oneOrNone(
+            "SELECT messages.id FROM messages LEFT JOIN message_recipient " +
+                "ON messages.id = message_recipient.message_id WHERE messages.creator_id = $1 ORDER by messages.id DESC LIMIT 1",
+            [creatorId]
+        );
+        if (!lastMessageSentToRecipient) {
+            parentId = null;
+        } else {
+            parentId = lastMessageSentToRecipient.id;
+        }
+        // TODO: either make the parent_message_id allow null values or
+        // figure out another way to create messages without a parent message (first message sent)
+        console.log(lastMessageSentToRecipient);
         const message = await db.one(
             "INSERT INTO messages (id, parent_message_id, message_body, created_on, creator_id) VALUES (DEFAULT, $<parent>, $<message>, current_timestamp, $<creator>) RETURNING id",
             {
-                creator: req.params.creatorId,
-                parent: req.body.parent,
-                message: req.body.message
+                creator: creatorId,
+                parent: parentId,
+                message: userMessage
             }
         );
-        //Query sometimes does not read / input recipient_id from req.body DO NOT KNOW WHY!!!!
         await db.none(
             "INSERT INTO message_recipient (id, recipient_group_id, recipient_id, message_id) VALUES (DEFAULT, $<group_id>, $<recipient_id>, $<message>)",
             {
-                group_id: req.body.group_id,
-                recipient_id: req.params.recipient_id,
+                group_id: groupId,
+                recipient_id: recipientId,
                 message: message.id
             }
         );
-        console.log("recipient_id:", req.params.recipient_id);
-        console.log("creator:", req.params.creatorId);
+        console.log("recipient_id:", creatorId);
+        console.log("creator:", recipientId);
         res.status(200).json({
             message,
             success: true
@@ -56,11 +71,14 @@ const getLastTenMessagesReceived = async (req: Request, res: Response, next: Nex
             "SELECT message_id FROM message_recipient WHERE recipient_id = $1 ORDER BY id DESC LIMIT 10",
             [req.params.id]
         );
+        if (!lastMessageIds.length) {
+            return res.status(404).json({ error: "No messages found" });
+        }
         const arrMessageId = lastMessageIds.map((n: { message_id: number }) => n.message_id);
         const lastTenMessages = await db.any("SELECT * FROM messages where id IN ( $1:list )", [
             arrMessageId
         ]);
-        res.status(200).json(lastTenMessages);
+        return res.status(200).json(lastTenMessages);
     } catch (err) {
         next(err);
     }

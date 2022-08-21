@@ -74,6 +74,9 @@ app.use("/user", userController);
 import messageController from "./controllers/messageController";
 app.use("/message", messageController);
 
+import friendController from "./controllers/friendController";
+app.use("/friend", friendController);
+
 httpServer.listen(PORT, () => {
     console.log(`The application is listening on port ${PORT}!`);
 });
