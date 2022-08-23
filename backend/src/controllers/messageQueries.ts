@@ -10,16 +10,14 @@ const sendMessage = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const lastMessageSentToRecipient = await db.oneOrNone(
             "SELECT messages.id FROM messages LEFT JOIN message_recipient " +
-                "ON messages.id = message_recipient.message_id WHERE messages.creator_id = $1 ORDER by messages.id DESC LIMIT 1",
-            [creatorId]
+                "ON messages.id = message_recipient.message_id WHERE messages.creator_id = $1 AND message_recipient.recipient_id = $2 ORDER by messages.id DESC LIMIT 1",
+            [creatorId, recipientId]
         );
         if (!lastMessageSentToRecipient) {
             parentId = null;
         } else {
             parentId = lastMessageSentToRecipient.id;
         }
-        // TODO: either make the parent_message_id allow null values or
-        // figure out another way to create messages without a parent message (first message sent)
         console.log(lastMessageSentToRecipient);
         const message = await db.one(
             "INSERT INTO messages (id, parent_message_id, message_body, created_on, creator_id) VALUES (DEFAULT, $<parent>, $<message>, current_timestamp, $<creator>) RETURNING id",
