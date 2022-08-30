@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 import * as userDB from "./userQueries";
-import authorization from "../middleware/authorization";
+import authorization from "../../middleware/authorization";
 
 router.get("/getall", authorization, userDB.getAllUsers);
 router.get("/getbyid/:id", authorization, userDB.getUserById);

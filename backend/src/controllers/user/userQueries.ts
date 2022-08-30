@@ -1,4 +1,4 @@
-import db from "../connection";
+import db from "../../connection";
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
@@ -68,7 +68,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction): Prom
         );
         return res.json({ createdUser: createdUser.rows });
     } catch (err) {
-        console.log(err);
+        console.error(err);
         next(err);
     }
 };
