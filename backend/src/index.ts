@@ -27,8 +27,6 @@ app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(cookieParser());
 
 io.on("connection", (socket: Socket) => {
-    console.log("New Web Socket Connection");
-
     socket.on("joinRoom", (username, room) => {
         const user = userJoin(socket.id, username, room);
         socket.join(user.room.toString());
@@ -52,7 +50,6 @@ io.on("connection", (socket: Socket) => {
     socket.on("chatMessage", (msg) => {
         const user = getCurrentUser(socket.id);
         io.to(user?.room).emit("message", formatMessage(user?.username || "no user found", msg));
-        console.log(msg);
     });
 
     // runs when client disconnects (to all other users )
@@ -64,17 +61,16 @@ io.on("connection", (socket: Socket) => {
                 formatMessage(bot, `${user.username} has left the chat`)
             );
         }
-        console.log("user has left the chat");
     });
 });
 
-import userController from "./controllers/userController";
+import userController from "./controllers/user/userController";
 app.use("/user", userController);
 
-import messageController from "./controllers/messageController";
+import messageController from "./controllers/message/messageController";
 app.use("/message", messageController);
 
-import friendController from "./controllers/friendController";
+import friendController from "./controllers/friend/friendController";
 app.use("/friend", friendController);
 
 httpServer.listen(PORT, () => {

@@ -1,4 +1,4 @@
-import db from "../connection";
+import db from "../../connection";
 import { Request, Response, NextFunction } from "express";
 
 const getAllFriends = async (req: Request, res: Response, next: NextFunction) => {
@@ -26,5 +26,19 @@ const getUserFriends = async (req: Request, res: Response, next: NextFunction) =
         next(err);
     }
 };
+
+interface accepted {
+    status: 0;
+}
+
+interface rejected {
+    status: 1;
+}
+
+interface pending {
+    status: 2;
+}
+
+const createFriend = async (req: Request, res: Response, next: NextFunction) => {};
 
 export { getAllFriends, getUserFriends };

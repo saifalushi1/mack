@@ -1,4 +1,4 @@
-import db from "../connection";
+import db from "../../connection";
 import dotenv from "dotenv";
 dotenv.config();
 import { Request, Response, NextFunction } from "express";
@@ -18,7 +18,6 @@ const sendMessage = async (req: Request, res: Response, next: NextFunction) => {
         } else {
             parentId = lastMessageSentToRecipient.id;
         }
-        console.log(lastMessageSentToRecipient);
         const message = await db.one(
             "INSERT INTO messages (id, parent_message_id, message_body, created_on, creator_id) VALUES (DEFAULT, $<parent>, $<message>, current_timestamp, $<creator>) RETURNING id",
             {
@@ -35,8 +34,6 @@ const sendMessage = async (req: Request, res: Response, next: NextFunction) => {
                 message: message.id
             }
         );
-        console.log("recipient_id:", creatorId);
-        console.log("creator:", recipientId);
         res.status(200).json({
             message,
             success: true
