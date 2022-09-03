@@ -28,19 +28,15 @@ const getUserFriends = async (req: Request, res: Response, next: NextFunction) =
 };
 
 interface accepted {
+    status: 0;
+}
+
+interface rejected {
     status: 1;
 }
 
 interface pending {
     status: 2;
-}
-
-interface rejected {
-    status: 0;
-}
-
-interface accepted {
-    status: 1;
 }
 
 const createFriend = async (req: Request, res: Response, next: NextFunction) => {};
