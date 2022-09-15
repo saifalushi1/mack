@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 
 const authorization = (req: Request, res: Response, next: NextFunction) => {
     const token = req.cookies.access_token;
-    console.log(req.cookies);
     if (!token) {
         return res.status(403).json({ error: "No token fonud" });
     }
