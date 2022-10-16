@@ -17,7 +17,7 @@ There are still a few things that need to be added.<br />
 </ul>
 
 ### How To Run
-*it is not currently in a state to run on other machines because of my backend configs*
+*it is not currently in a state to run on other machines because of my backend configs* <br />
 BackEnd: <code>run npm i</code>Then<code>run: npm run build</code> *run this first*<br />
 FrontEnd: <code>run npm i</code>Then<code>run: npm start</code><br />
 
