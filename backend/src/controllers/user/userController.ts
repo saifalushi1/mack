@@ -10,5 +10,6 @@ router.post("/signup", userDB.createUser);
 router.delete("/delete/:id", authorization, userDB.deleteUser);
 router.post("/login", userDB.login);
 router.post("/logout", authorization, userDB.logout);
+router.patch("/changepassword", authorization, userDB.updatePassword);
 
 export default router;
