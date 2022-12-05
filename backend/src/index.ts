@@ -13,9 +13,9 @@ const app = express();
 const httpServer = http.createServer(app);
 const io = socketio(httpServer, {
     cors: {
-        origin: "http://localhost:3000"
+        origin: "http://localhost:3000",
         // origin: "*"
-    }
+    },
 });
 const bot = "Mack Bot";
 const PORT = process.env.PORT || 8000;
@@ -35,21 +35,24 @@ io.on("connection", (socket: Socket) => {
             "message",
             formatMessage(
                 bot,
-                `Welcome to the chat roomNumber: ${user.room} user: ${user.username}`
-            )
+                `Welcome to the chat roomNumber: ${user.room} user: ${user.username}`,
+            ),
         );
 
         // Broadcast when a user connects (to all users) thinking about changing or removing
         socket.broadcast.emit(
             "message",
-            formatMessage(bot, `${user.username} has joined the chat`)
+            formatMessage(bot, `${user.username} has joined the chat`),
         );
     });
 
     // listen for chat message from client and send back the message
     socket.on("chatMessage", (msg) => {
         const user = getCurrentUser(socket.id);
-        io.to(user?.room).emit("message", formatMessage(user?.username || "no user found", msg));
+        io.to(user?.room).emit(
+            "message",
+            formatMessage(user?.username || "no user found", msg),
+        );
     });
 
     // runs when client disconnects (to all other users )
@@ -58,7 +61,7 @@ io.on("connection", (socket: Socket) => {
         if (user.room !== -1) {
             io.to(user.room).emit(
                 "message",
-                formatMessage(bot, `${user.username} has left the chat`)
+                formatMessage(bot, `${user.username} has left the chat`),
             );
         }
     });
@@ -70,7 +73,7 @@ app.use("/user", userController);
 import messageController from "./controllers/message/messageController";
 app.use("/message", messageController);
 
-import friendController from "./controllers/friend/friendController";
+import friendController from "./controllers/friend";
 app.use("/friend", friendController);
 
 httpServer.listen(PORT, () => {

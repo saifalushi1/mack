@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import * as userDB from "./userQueries";
+import * as userDB from "./userRoutes";
 import authorization from "../../middleware/authorization";
 
 router.get("/getall", authorization, userDB.getAllUsers);
