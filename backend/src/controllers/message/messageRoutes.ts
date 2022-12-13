@@ -11,6 +11,49 @@ import {
 } from "./queries/messageQuery";
 
 const sendMessage = async (req: Request, res: Response, next: NextFunction) => {
+    const { creatorId, userMessage, recipientId } = req.body;
+    let { groupId } = req.body;
+    let parentId: number | null;
+
+    if (
+        groupId === undefined ||
+        typeof groupId === "string" ||
+        groupId instanceof String
+    ) {
+        res.status(400).json({ message: "invalid type of groupId" });
+        return;
+    }
+
+    try {
+        const lastMessageId = await lastMessageSentToRecipient(
+            creatorId,
+            recipientId,
+        );
+
+        if (!lastMessageId) {
+            parentId = null;
+        } else {
+            parentId = lastMessageId.id;
+        }
+
+        const { id } = await createMessage(creatorId, parentId, userMessage);
+        await putMessageIntoRecipientTable(groupId, recipientId, id);
+
+        res.status(200).json({
+            messageId: id,
+            success: true,
+        });
+        return;
+    } catch (err) {
+        next(err);
+    }
+};
+
+async function sendGroupMessage(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+): Promise<void> {
     const { creatorId, userMessage, groupId, recipientId } = req.body;
     let parentId: number | null;
     if (groupId === null || groupId === undefined) {
@@ -35,10 +78,11 @@ const sendMessage = async (req: Request, res: Response, next: NextFunction) => {
             messageId: id,
             success: true,
         });
+        return;
     } catch (err) {
         next(err);
     }
-};
+}
 
 const getAllMessagesFromUser = async (
     req: Request,
