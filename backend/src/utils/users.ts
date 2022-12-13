@@ -3,19 +3,19 @@
 const users: Array<{ id: string; username: string; room: number }> = [];
 
 // Join user to chat
-const userJoin = (id: string, username: string, room: number) => {
+export function userJoin(id: string, username: string, room: number) {
     const user = { id, username, room };
     users.push(user);
     return user;
-};
+}
 
 // Get current user
-const getCurrentUser = (id: string) => {
+export function getCurrentUser(id: string) {
     return users.find((user) => user.id === id);
-};
+}
 
 // User leaves chat
-const userLeave = (id: string) => {
+export function userLeave(id: string) {
     const index = users.findIndex((user) => user.id === id);
     const userToLeave = users[index];
     if (!userToLeave) {
@@ -23,11 +23,9 @@ const userLeave = (id: string) => {
     }
     users.splice(index, 1)[0];
     return userToLeave;
-};
+}
 
 // Get room users
-const getRoomUsers = (room: number) => {
+export function getRoomUsers(room: number) {
     return users.filter((user) => user.room === room);
-};
-
-export { userJoin, getCurrentUser, userLeave, getRoomUsers };
+}

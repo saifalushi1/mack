@@ -1,15 +1,24 @@
 import express from "express";
 const router = express.Router();
-import * as userDB from "./userRoutes";
-import authorization from "../../middleware/authorization";
+import {
+    createUser,
+    deleteUser,
+    getAllUsers,
+    getUserById,
+    getUserByUsername,
+    login,
+    logout,
+    updatePassword,
+} from "./userRoutes";
+import { authorization } from "../../middleware/authorization";
 
-router.get("/getall", authorization, userDB.getAllUsers);
-router.get("/getbyid/:id", authorization, userDB.getUserById);
-router.get("/getbyusername/:username", authorization, userDB.getUserByUsername);
-router.post("/signup", userDB.createUser);
-router.delete("/delete/:id", authorization, userDB.deleteUser);
-router.post("/login", userDB.login);
-router.post("/logout", authorization, userDB.logout);
-router.patch("/changepassword", authorization, userDB.updatePassword);
+router.get("/getall", authorization, getAllUsers);
+router.get("/getbyid/:id", authorization, getUserById);
+router.get("/getbyusername/:username", authorization, getUserByUsername);
+router.post("/signup", createUser);
+router.delete("/delete/:id", authorization, deleteUser);
+router.post("/login", login);
+router.post("/logout", authorization, logout);
+router.patch("/changepassword", authorization, updatePassword);
 
 export default router;

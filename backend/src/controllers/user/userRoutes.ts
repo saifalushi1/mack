@@ -3,11 +3,11 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
-const getAllUsers = async (
+export async function getAllUsers(
     req: Request,
     res: Response,
     next: NextFunction,
-): Promise<any> => {
+): Promise<any> {
     try {
         const users = await db.any("SELECT * FROM users");
         const cookie = req.headers.cookie;
@@ -15,13 +15,13 @@ const getAllUsers = async (
     } catch (err) {
         next(err);
     }
-};
+}
 
-const getUserById = async (
+export async function getUserById(
     req: Request,
     res: Response,
     next: NextFunction,
-): Promise<any> => {
+): Promise<any> {
     const { id } = req.params;
     try {
         const userById = await db.one("SELECT * FROM users WHERE id = $1", [
@@ -31,13 +31,13 @@ const getUserById = async (
     } catch (err) {
         next(err);
     }
-};
+}
 
-const getUserByUsername = async (
+export async function getUserByUsername(
     req: Request,
     res: Response,
     next: NextFunction,
-): Promise<any> => {
+): Promise<any> {
     const { username } = req.params;
     try {
         //When using like and passing special characters such as % you must use this format EXAMPLE: \'%$1#%\'
@@ -51,13 +51,13 @@ const getUserByUsername = async (
         console.error(err);
         next(err);
     }
-};
+}
 
-const createUser = async (
+export async function createUser(
     req: Request,
     res: Response,
     next: NextFunction,
-): Promise<any> => {
+): Promise<any> {
     const { firstName, lastName, username, email, password } = req.body;
     if (!firstName || !lastName || !username || !email || !password) {
         return res.status(400).json({ error: "Missing field" });
@@ -93,9 +93,13 @@ const createUser = async (
         console.error(err);
         next(err);
     }
-};
+}
 
-const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+export async function deleteUser(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) {
     try {
         const deletedUser = await db.result("DELETE FROM users WHERE id = $1", [
             req.params.id,
@@ -107,9 +111,9 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
     } catch (err) {
         next(err);
     }
-};
+}
 
-const login = async (req: Request, res: Response, next: NextFunction) => {
+export async function login(req: Request, res: Response, next: NextFunction) {
     const { email, password } = req.body;
     if (!email || !password) {
         return res
@@ -161,9 +165,9 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     } catch (err) {
         next(err);
     }
-};
+}
 
-const logout = async (req: Request, res: Response, next: NextFunction) => {
+export async function logout(req: Request, res: Response, next: NextFunction) {
     try {
         await db.none("UPDATE users SET is_active = 0 WHERE id = $1", [
             req.body.id,
@@ -174,9 +178,13 @@ const logout = async (req: Request, res: Response, next: NextFunction) => {
     } catch (err) {
         next(err);
     }
-};
+}
 
-async function updatePassword(req: Request, res: Response, next: NextFunction) {
+export async function updatePassword(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) {
     let { password, id } = req.body;
     password = await bcrypt.hash(password, 10);
     try {
@@ -189,15 +197,3 @@ async function updatePassword(req: Request, res: Response, next: NextFunction) {
         next(err);
     }
 }
-
-export {
-    db,
-    getAllUsers,
-    getUserById,
-    getUserByUsername,
-    createUser,
-    deleteUser,
-    login,
-    logout,
-    updatePassword,
-};

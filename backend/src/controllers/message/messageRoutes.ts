@@ -10,7 +10,11 @@ import {
     listOfLastTenMessagesSent,
 } from "./queries/messageQuery";
 
-const sendMessage = async (req: Request, res: Response, next: NextFunction) => {
+export async function sendMessage(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) {
     const { creatorId, userMessage, recipientId } = req.body;
     let { groupId } = req.body;
     let parentId: number | null;
@@ -47,48 +51,13 @@ const sendMessage = async (req: Request, res: Response, next: NextFunction) => {
     } catch (err) {
         next(err);
     }
-};
-
-async function sendGroupMessage(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-): Promise<void> {
-    const { creatorId, userMessage, groupId, recipientId } = req.body;
-    let parentId: number | null;
-    if (groupId === null || groupId === undefined) {
-        // dont know what to do here yet
-    }
-    try {
-        const lastMessageId = await lastMessageSentToRecipient(
-            creatorId,
-            recipientId,
-        );
-
-        if (!lastMessageId) {
-            parentId = null;
-        } else {
-            parentId = lastMessageId.id;
-        }
-
-        const { id } = await createMessage(creatorId, parentId, userMessage);
-        await putMessageIntoRecipientTable(groupId, recipientId, id);
-
-        res.status(200).json({
-            messageId: id,
-            success: true,
-        });
-        return;
-    } catch (err) {
-        next(err);
-    }
 }
 
-const getAllMessagesFromUser = async (
+export async function getAllMessagesFromUser(
     req: Request,
     res: Response,
     next: NextFunction,
-) => {
+) {
     const { recipientId, creatorId } = req.body;
     try {
         const allMessages = await listOfAllMessagesFromUser(
@@ -100,13 +69,13 @@ const getAllMessagesFromUser = async (
     } catch (err) {
         next(err);
     }
-};
+}
 
-const getLastTenMessagesReceived = async (
+export async function getLastTenMessagesReceived(
     req: Request,
     res: Response,
     next: NextFunction,
-) => {
+) {
     try {
         const lastMessageIds = await db.any(
             "SELECT message_id FROM message_recipient WHERE recipient_id = $1 ORDER BY id DESC LIMIT 10",
@@ -126,13 +95,13 @@ const getLastTenMessagesReceived = async (
     } catch (err) {
         next(err);
     }
-};
+}
 
-const getLastTenMessagesSent = async (
+export async function getLastTenMessagesSent(
     req: Request,
     res: Response,
     next: NextFunction,
-) => {
+) {
     const { creatorId } = req.params;
 
     try {
@@ -142,11 +111,4 @@ const getLastTenMessagesSent = async (
     } catch (err) {
         next(err);
     }
-};
-
-export {
-    sendMessage,
-    getLastTenMessagesReceived,
-    getAllMessagesFromUser,
-    getLastTenMessagesSent,
-};
+}

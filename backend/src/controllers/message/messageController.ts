@@ -1,11 +1,16 @@
-import * as messagedb from "./messageRoutes";
+import {
+    getAllMessagesFromUser,
+    getLastTenMessagesReceived,
+    getLastTenMessagesSent,
+    sendMessage,
+} from "./messageRoutes";
 import express from "express";
-import authorization from "../../middleware/authorization";
+import { authorization } from "../../middleware/authorization";
 const router = express.Router();
 
-router.get("/lastReceived/:id", authorization, messagedb.getLastTenMessagesReceived);
-router.get("/lastSent/:creatorId", authorization, messagedb.getLastTenMessagesSent);
-router.get("/test", authorization, messagedb.getAllMessagesFromUser);
-router.post("/create", authorization, messagedb.sendMessage);
+router.get("/lastReceived/:id", authorization, getLastTenMessagesReceived);
+router.get("/lastSent/:creatorId", authorization, getLastTenMessagesSent);
+router.get("/test", authorization, getAllMessagesFromUser);
+router.post("/create", authorization, sendMessage);
 
 export default router;
