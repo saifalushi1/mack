@@ -2,6 +2,8 @@ import db from "../../connection";
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import dotenv from "dotenv";
+dotenv.config();
 
 export async function getAllUsers(
     req: Request,

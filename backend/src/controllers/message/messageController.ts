@@ -1,9 +1,9 @@
 import {
-    getAllMessagesFromUser,
+    sendMessage,
     getLastTenMessagesReceived,
     getLastTenMessagesSent,
-    sendMessage,
-} from "./messageRoutes";
+    getAllMessagesFromUser,
+} from "../../domain/messages";
 import express from "express";
 import { authorization } from "../../middleware/authorization";
 const router = express.Router();
