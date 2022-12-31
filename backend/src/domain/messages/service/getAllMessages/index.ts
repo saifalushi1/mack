@@ -2,7 +2,7 @@ import db from "../../../../connection";
 
 export async function listOfAllMessagesFromUser(
     recipientId: number,
-    creatorId: string,
+    creatorId: number,
 ) {
     let arrMessageId: number[] = [];
     try {
