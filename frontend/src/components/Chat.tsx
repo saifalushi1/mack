@@ -82,7 +82,6 @@ const Chat: React.FC<AppProps> = (props): JSX.Element => {
                     </div>
                 </main>
                 <div className="chat-form-container">
-                    {/* OY BOZO come back later and just make this two inputs with a button that on click runs handle submit */}
                     <form id="chat-form" onSubmit={submitMessage}>
                         <input
                             id="msg"

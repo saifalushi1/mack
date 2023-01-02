@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import logo from "../../resources/logo.png"
+import logo from "../../styling/resources/logo.png"
 
 const Header = ({
     heading,

@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit"
-import { Iuser } from "../App"
+import { Iuser } from "../../App"
 
 const initialState = {
     id: 0,
