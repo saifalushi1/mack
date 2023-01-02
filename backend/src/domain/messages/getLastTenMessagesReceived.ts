@@ -1,6 +1,7 @@
 import db from "../../connection";
 import { Request, Response, NextFunction } from "express";
 
+//REFACTOR TO SERVICE FUNC
 export async function getLastTenMessagesReceived(
     req: Request,
     res: Response,

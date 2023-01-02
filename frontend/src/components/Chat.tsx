@@ -22,7 +22,7 @@ const Chat: React.FC<AppProps> = (props): JSX.Element => {
     const [messages, setMessages] = useState<Array<IbotMessages>>([])
     const [roomNumber, setRoomNumber] = useState<number>(1)
     const [chatBody, setChatBody] = useState<string>("")
-
+    console.log(props)
     const joinRoom = () => {
         socket.emit("joinRoom", props.user.username, roomNumber.toString())
         console.log("joining room")
@@ -62,9 +62,9 @@ const Chat: React.FC<AppProps> = (props): JSX.Element => {
                 <main className="chat-main">
                     <div className="chat-sidebar">
                         <h3>
-                            <i className="fas fa-comments"></i> Room Name:
+                            <i className="fas fa-comments"></i> these are users:
                         </h3>
-                        <h2 id="room-name">JavaScript</h2>
+                        <h2 id="room-name">bob</h2>
                         <h3>
                             <i className="fas fa-users"></i> Join Rooms
                         </h3>

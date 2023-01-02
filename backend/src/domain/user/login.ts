@@ -42,7 +42,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
         );
 
         res.cookie("access_token", token, {
-            httpOnly: true,
+            httpOnly: false,
             secure: process.env.NODE_ENV === "production",
         }).json({
             match: match,

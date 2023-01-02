@@ -29,6 +29,13 @@ app.use(cookieParser());
 io.on("connection", (socket: Socket) => {
     socket.on("joinRoom", (username, room) => {
         const user = userJoin(socket.id, username, room);
+        if (user === undefined) {
+            const errorMessage: ErrorMessage = {
+                errorMessage: "user has already joined",
+            };
+            socket.emit("userError", errorMessage);
+            return;
+        }
         socket.join(user.room.toString());
 
         socket.emit(
@@ -79,3 +86,7 @@ app.use("/friend", friendController);
 httpServer.listen(PORT, () => {
     console.log(`The application is listening on port ${PORT}!`);
 });
+
+interface ErrorMessage {
+    errorMessage: "user has already joined";
+}

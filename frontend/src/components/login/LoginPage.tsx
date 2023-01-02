@@ -3,6 +3,7 @@ import axios from "axios"
 import { useNavigate } from "react-router-dom"
 import Header from "./Header"
 import { Iuser } from "../../App"
+import { socket } from "../../clientUtils/socket"
 
 axios.defaults.withCredentials = true
 const fixedInputClass =
@@ -34,7 +35,7 @@ const LoginPage = ({ setUser }: IProps) => {
     const handleSubmit = async (event: React.SyntheticEvent): Promise<void> => {
         const apiURL = process.env.REACT_APP_USER_ENDPOINT!
         event.preventDefault()
-        
+
         try {
             setUserError((prevState) => ({ ...prevState, isError: false }))
             const loginData = await axios.post(`${apiURL}/login`, {
@@ -43,37 +44,9 @@ const LoginPage = ({ setUser }: IProps) => {
             })
             setUser(loginData.data.userinfo)
             navigate("/chat")
+
         } catch (err) {
-            if (axios.isAxiosError(err)) {
-                setUserError((prevState) => ({ ...prevState, isError: true }))
-                if (!err?.response) {
-                    console.error("No Server Response")
-                } else if (err.response?.status === 401) {
-                    setUserError((prevState) => ({
-                        ...prevState,
-                        errorMessage: "Incorrect username or password"
-                    }))
-                    console.error(err.response?.data)
-                } else if (err.response?.status === 404) {
-                    setUserError((prevState) => ({
-                        ...prevState,
-                        errorMessage: "No account found"
-                    }))
-                    console.error(err.response?.data)
-                } else if (err.response?.status === 400) {
-                    setUserError((prevState) => ({
-                        ...prevState,
-                        errorMessage: "Must enter email and password"
-                    }))
-                    console.error(err.response?.data)
-                } else {
-                    setUserError((prevState) => ({
-                        ...prevState,
-                        errorMessage: "login Failed"
-                    }))
-                    console.error("Login Failed")
-                }
-            }
+            handleError(err, setUserError)
         }
     }
     return (
@@ -164,3 +137,35 @@ const LoginPage = ({ setUser }: IProps) => {
 export default LoginPage
 
 
+function handleError(err: unknown, setUserError: Dispatch<SetStateAction<IUserError>>){
+    if (axios.isAxiosError(err)) {
+        setUserError((prevState) => ({ ...prevState, isError: true }))
+        if (!err?.response) {
+            console.error("No Server Response")
+        } else if (err.response?.status === 401) {
+            setUserError((prevState) => ({
+                ...prevState,
+                errorMessage: "Incorrect username or password"
+            }))
+            console.error(err.response?.data)
+        } else if (err.response?.status === 404) {
+            setUserError((prevState) => ({
+                ...prevState,
+                errorMessage: "No account found"
+            }))
+            console.error(err.response?.data)
+        } else if (err.response?.status === 400) {
+            setUserError((prevState) => ({
+                ...prevState,
+                errorMessage: "Must enter email and password"
+            }))
+            console.error(err.response?.data)
+        } else {
+            setUserError((prevState) => ({
+                ...prevState,
+                errorMessage: "login Failed"
+            }))
+            console.error("Login Failed")
+        }
+}
+}

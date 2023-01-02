@@ -1,10 +1,25 @@
 //storing users in memory right now but should implement with a db like redis
 // if the app gets too large
-const users: Array<{ id: string; username: string; room: number }> = [];
+interface User {
+    id: string;
+    username: string;
+    room: number;
+}
+const users: Array<User> = [];
 
 // Join user to chat
-export function userJoin(id: string, username: string, room: number) {
+export function userJoin(
+    id: string,
+    username: string,
+    room: number,
+): User | undefined {
     const user = { id, username, room };
+    const userFound = users.filter((userToCheck) => {
+        return userToCheck.username === user.username;
+    });
+    if (userFound.length > 0) {
+        return undefined;
+    }
     users.push(user);
     return user;
 }

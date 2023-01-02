@@ -5,6 +5,8 @@ import Chat from "./components/Chat"
 import Navigation from "./components/Navigation"
 import SignUp from "./components/login/SignUp"
 import LoginPage from "./components/login/LoginPage"
+import { cookieLogin } from "./clientUtils/cookieLogin"
+
 
 export interface Iuser {
     id: number
@@ -26,13 +28,12 @@ const App = () => {
         firstName: "",
         lastName: ""
     })
-
     useEffect(() => {
         socket.on("connect", () => {
             setConnected(true)
         })
+        //implement cookieLogin and add an age to cookie
     }, [])
-
     return (
         <>
             <Navigation loggedIn={LoggedIn} />
@@ -46,3 +47,7 @@ const App = () => {
 }
 
 export default App
+
+// function test(){
+//     document.cookie
+// }

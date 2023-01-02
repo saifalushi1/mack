@@ -12,9 +12,11 @@
         "@types/react": "^18.0.6",
         "@types/react-dom": "^18.0.2",
         "axios": "^0.27.2",
+        "js-cookie": "^3.0.1",
         "moment": "^2.29.3",
         "react": "^18.0.0",
         "react-dom": "^18.0.0",
+        "react-jwt": "^1.1.7",
         "react-router-dom": "^6.3.0",
         "react-scripts": "5.0.1",
         "redux": "^4.2.0",
@@ -50,6 +52,7 @@
         ]
     },
     "devDependencies": {
+        "@types/js-cookie": "^3.0.2",
         "@typescript-eslint/eslint-plugin": "^5.30.6",
         "@typescript-eslint/parser": "^5.30.6",
         "autoprefixer": "^10.4.7",
