@@ -9,7 +9,7 @@ import {
     login,
     logout,
     updatePassword,
-} from "./userRoutes";
+} from "../../domain/user";
 import { authorization } from "../../middleware/authorization";
 
 router.get("/getall", authorization, getAllUsers);

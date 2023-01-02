@@ -67,10 +67,10 @@ io.on("connection", (socket: Socket) => {
     });
 });
 
-import userController from "./controllers/user/userController";
+import userController from "./controllers/user";
 app.use("/user", userController);
 
-import messageController from "./controllers/message/messageController";
+import messageController from "./controllers/message";
 app.use("/message", messageController);
 
 import friendController from "./controllers/friend";
