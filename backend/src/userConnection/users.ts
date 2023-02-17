@@ -4,7 +4,17 @@ interface User {
     id: string;
     userName: string;
     room: number;
+    socketId: string;
     roomName?: string;
+}
+
+interface userRoom {
+    room_number: number;
+    username: string;
+    user_id: number;
+    time_joined: Date;
+    room_name: null | string;
+    socket_id: string;
 }
 
 // Join user to chat
@@ -17,17 +27,24 @@ export async function userJoin(user: User): Promise<User | undefined> {
         removeUserFromChat(parseInt(user.id));
     }
     await db.none(
-        "INSERT INTO chats (room_number, username, user_id, time_joined, room_name) VALUES($<user.room>, $<user.userName>, $<user.id>, current_timestamp, $<user.roomName>)",
+        "INSERT INTO chats (room_number, username, user_id, time_joined, room_name, socket_id) VALUES($<user.room>, $<user.userName>, $<user.id>, current_timestamp, $<user.roomName>, $<user.socketId>)",
         { user },
     );
     return user;
 }
 
 // Get current user
-export async function getCurrentUser(id: string) {
-    const user = await db.one("SELECT * FROM chats WHERE user_id = $1", [id]);
-
-    return user;
+export async function getCurrentUser(id: string): Promise<User> {
+    const user: userRoom = await db.one(
+        "SELECT * FROM chats WHERE socket_id = $1",
+        [id],
+    );
+    return {
+        id: user.user_id.toString(),
+        room: user.room_number,
+        socketId: user.socket_id,
+        userName: user.username,
+    };
 }
 
 // removes user from chat
@@ -36,7 +53,7 @@ async function removeUserFromChat(id: number): Promise<void> {
 }
 
 // Get room users
-export async function getRoomUsers(room: number) {
+export async function getRoomUsers(room: number): Promise<number> {
     return await db.one(
         "SELECT room_number FROM chats where room_number = $1",
         [room],

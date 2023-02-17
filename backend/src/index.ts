@@ -35,6 +35,7 @@ io.on("connection", (socket: Socket) => {
                 room: roomNumber,
                 userName,
                 roomName,
+                socketId: socket.id,
             });
             console.log("*******", user);
             if (user === undefined) {
@@ -65,7 +66,7 @@ io.on("connection", (socket: Socket) => {
     // listen for chat message from client and send back the message
     socket.on("chatMessage", async (msg) => {
         const user = await getCurrentUser(socket.id);
-        io.to(user.room).emit(
+        io.to(user.room.toString()).emit(
             "message",
             formatMessage(user.userName || "no user found", msg),
         );
