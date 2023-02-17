@@ -5,7 +5,7 @@ dotenv.config();
 import http from "http";
 const socketio = require("socket.io"); // eslint-disable-line
 import { formatMessage } from "./utils/message";
-import { userJoin, getCurrentUser, userLeave } from "./utils/users";
+import { userJoin, getCurrentUser } from "./userConnection/users";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
@@ -27,50 +27,53 @@ app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(cookieParser());
 
 io.on("connection", (socket: Socket) => {
-    socket.on("joinRoom", (username, room) => {
-        const user = userJoin(socket.id, username, room);
-        if (user === undefined) {
-            const errorMessage: ErrorMessage = {
-                errorMessage: "user has already joined",
-            };
-            socket.emit("userError", errorMessage);
-            return;
-        }
-        socket.join(user.room.toString());
+    socket.on(
+        "joinRoom",
+        async (id: string, roomNumber: number, userName: string, roomName) => {
+            const user = await userJoin({
+                id,
+                room: roomNumber,
+                userName,
+                roomName,
+            });
+            console.log("*******", user);
+            if (user === undefined) {
+                const errorMessage: ErrorMessage = {
+                    errorMessage: "user has already joined",
+                };
+                socket.emit("userError", errorMessage);
+                return;
+            }
+            socket.join(user.room.toString());
 
-        socket.emit(
-            "message",
-            formatMessage(
-                bot,
-                `Welcome to the chat roomNumber: ${user.room} user: ${user.username}`,
-            ),
-        );
+            socket.emit(
+                "message",
+                formatMessage(
+                    bot,
+                    `Welcome to the chat roomNumber: ${user.room} user: ${user.userName}`,
+                ),
+            );
 
-        // Broadcast when a user connects (to all users) thinking about changing or removing
-        socket.broadcast.emit(
-            "message",
-            formatMessage(bot, `${user.username} has joined the chat`),
-        );
-    });
+            // Broadcast when a user connects (to all users) thinking about changing or removing
+            socket.broadcast.emit(
+                "message",
+                formatMessage(bot, `${user.userName} has joined the chat`),
+            );
+        },
+    );
 
     // listen for chat message from client and send back the message
-    socket.on("chatMessage", (msg) => {
-        const user = getCurrentUser(socket.id);
-        io.to(user?.room).emit(
+    socket.on("chatMessage", async (msg) => {
+        const user = await getCurrentUser(socket.id);
+        io.to(user.room).emit(
             "message",
-            formatMessage(user?.username || "no user found", msg),
+            formatMessage(user.userName || "no user found", msg),
         );
     });
 
     // runs when client disconnects (to all other users )
     socket.on("disconnect", () => {
-        const user = userLeave(socket.id);
-        if (user.room !== -1) {
-            io.to(user.room).emit(
-                "message",
-                formatMessage(bot, `${user.username} has left the chat`),
-            );
-        }
+        console.log("user disconnected");
     });
 });
 

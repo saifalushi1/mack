@@ -1,12 +1,12 @@
 import db from "../../connection";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, CookieOptions } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 dotenv.config();
 
 export async function login(req: Request, res: Response, next: NextFunction) {
-    const { email, password } = req.body;
+    const { email, password, remember } = req.body;
     if (!email || !password) {
         return res
             .status(400)
@@ -40,11 +40,18 @@ export async function login(req: Request, res: Response, next: NextFunction) {
             { id: userinfo.id, username: userinfo.username },
             process.env.SECRET!,
         );
-
-        res.cookie("access_token", token, {
+        let cookieOptions: CookieOptions = {
             httpOnly: false,
             secure: process.env.NODE_ENV === "production",
-        }).json({
+        };
+        if (remember) {
+            cookieOptions = {
+                ...cookieOptions,
+                maxAge: 7 * 24 * 3600000,
+                expires: new Date(Date.now() + 7 * 24 * 3600000),
+            };
+        }
+        res.cookie("access_token", token, cookieOptions).json({
             match: match,
             userinfo: {
                 id: userinfo.id,

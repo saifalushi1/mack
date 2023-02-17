@@ -19,12 +19,13 @@ interface AppProps {
 }
 
 const Chat: React.FC<AppProps> = (props): JSX.Element => {
+    const user = props.user
     const [messages, setMessages] = useState<Array<IbotMessages>>([])
     const [roomNumber, setRoomNumber] = useState<number>(1)
     const [chatBody, setChatBody] = useState<string>("")
     console.log(props)
     const joinRoom = () => {
-        socket.emit("joinRoom", props.user.username, roomNumber.toString())
+        socket.emit("joinRoom", user.id.toString(), roomNumber, user.username,)
         console.log("joining room")
     }
 
