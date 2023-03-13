@@ -21,9 +21,10 @@ interface IUserError {
 
 interface IProps {
     setUser: Dispatch<SetStateAction<Iuser>>
+    setLoggedIn: Dispatch<SetStateAction<boolean>>
 }
 
-const LoginPage = ({ setUser }: IProps) => {
+const LoginPage = ({ setUser, setLoggedIn }: IProps) => {
     const navigate = useNavigate()
     const [userLogin, setUserLogin] = useState<IUserLogin>({ email: "", password: "" })
     const [userError, setUserError] = useState<IUserError>({ isError: false, errorMessage: "" })
@@ -43,6 +44,7 @@ const LoginPage = ({ setUser }: IProps) => {
                 password: userLogin.password
             })
             setUser(loginData.data.userinfo)
+            setLoggedIn(true)
             navigate("/chat")
 
         } catch (err) {
@@ -123,7 +125,6 @@ const LoginPage = ({ setUser }: IProps) => {
                     </div>
                     <button type="submit"
                         className="relative flex justify-center w-full px-4 py-2 mt-10 text-sm font-medium text-white bg-purple-600 border border-transparent rounded-md group hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
-                        // onClick={() => handleSubmit()}
                     >
                         Login
                     </button>

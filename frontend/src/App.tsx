@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { socket } from "./clientUtils/socket"
 import { Routes, Route } from "react-router-dom"
 import Chat from "./components/Chat"
-import Navigation from "./components/Navigation"
+import Navigation from "./components/navigation/Navigation"
 import SignUp from "./components/login/SignUp"
 import LoginPage from "./components/login/LoginPage"
 import { cookieLogin } from "./clientUtils/cookieLogin"
@@ -38,7 +38,7 @@ const App = () => {
         <>
             <Navigation loggedIn={LoggedIn} />
             <Routes>
-                <Route path="/" element={<LoginPage setUser={setUser} />} />
+                <Route path="/" element={<LoginPage setUser={setUser} setLoggedIn={setLoggedIn}/>} />
                 <Route path="/chat" element={<Chat user={user} connected={connected} />} />
                 <Route path="/signup" element={<SignUp />} />
             </Routes>

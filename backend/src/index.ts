@@ -37,7 +37,6 @@ io.on("connection", (socket: Socket) => {
                 roomName,
                 socketId: socket.id,
             });
-            console.log("*******", user);
             if (user === undefined) {
                 const errorMessage: ErrorMessage = {
                     errorMessage: "user has already joined",

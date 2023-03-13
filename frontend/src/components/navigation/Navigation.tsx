@@ -2,7 +2,9 @@ import { Link } from "react-router-dom"
 import { useState } from "react"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
-import "../styling/nav.css"
+import "../../styling/nav.css"
+import { handleNavigationError } from "./navigation-errors"
+
 axios.defaults.withCredentials = true
 
 interface IProps {
@@ -10,29 +12,25 @@ interface IProps {
 }
 
 const Navigation: React.FC<IProps> = ({ loggedIn }): JSX.Element => {
+    console.log("logged in ", loggedIn)
     const [isNavExpanded, setIsNavExpanded] = useState(false)
+    const navigate = useNavigate()
     const logout = async (): Promise<void> => {
         const apiURL = process.env.REACT_APP_USER_ENDPOINT!
         try {
             //logout requires userID add context to pass the user info around
             await axios.post(`${apiURL}/logout`, { id: 1 })
+            navigate("/")
         } catch (err) {
-            if (axios.isAxiosError(err)) {
-                if (!err?.response) {
-                    console.error("No Server Response")
-                } else if (err.response?.status === 400) {
-                    // setUserError(true)
-                    // console.error("Missing Field")
-                    console.error(err.response?.data)
-                } else if (err.response?.status === 401) {
-                    // setUserError(true)
-                    console.error(err.response?.data)
-                } else {
-                    console.error("Login Failed")
-                }
-            }
+            handleNavigationError(err)
         }
-        await axios.post(`${apiURL}/logout`)
+    }
+
+    function displayLogOut(loggedIn: boolean): JSX.Element | null{
+        if(loggedIn === true){
+            return <button onClick={() => logout()}>Log Out</button>
+        }
+        else return null
     }
     return (
         <>
@@ -68,7 +66,7 @@ const Navigation: React.FC<IProps> = ({ loggedIn }): JSX.Element => {
                             <a href="/about">About</a>
                         </li>
                         <li>
-                            <a href="/contact">Contact</a>
+                            {displayLogOut(loggedIn)}
                         </li>
                     </ul>
                 </div>
@@ -76,5 +74,8 @@ const Navigation: React.FC<IProps> = ({ loggedIn }): JSX.Element => {
         </>
     )
 }
+
+
+
 
 export default Navigation
