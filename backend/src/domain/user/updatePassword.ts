@@ -1,4 +1,4 @@
-import db from "../../connection";
+import dbConnection from "../../connection";
 import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
 
@@ -7,6 +7,7 @@ export async function updatePassword(
     res: Response,
     next: NextFunction,
 ) {
+    const db = dbConnection();
     let { password, id } = req.body;
     password = await bcrypt.hash(password, 10);
     try {

@@ -1,4 +1,4 @@
-import db from "../../connection";
+import dbConnection from "../../connection";
 import { Request, Response, NextFunction } from "express";
 
 export async function getAllUsers(
@@ -7,6 +7,7 @@ export async function getAllUsers(
     next: NextFunction,
 ): Promise<any> {
     try {
+        const db = dbConnection();
         const users = await db.any("SELECT * FROM users");
         const cookie = req.headers.cookie;
         return res.json({ users: users, cookie: cookie });

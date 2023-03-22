@@ -1,4 +1,4 @@
-import db from "../../connection";
+import dbConnection from "../../connection";
 import { Request, Response, NextFunction } from "express";
 
 export async function deleteUser(
@@ -7,6 +7,7 @@ export async function deleteUser(
     next: NextFunction,
 ) {
     try {
+        const db = dbConnection();
         const deletedUser = await db.result("DELETE FROM users WHERE id = $1", [
             req.params.id,
         ]);

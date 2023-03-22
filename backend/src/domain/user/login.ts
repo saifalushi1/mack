@@ -1,4 +1,4 @@
-import db from "../../connection";
+import dbConnection from "../../connection";
 import { Request, Response, NextFunction, CookieOptions } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export async function login(req: Request, res: Response, next: NextFunction) {
+    const db = dbConnection();
     const { email, password, remember } = req.body;
     if (!email || !password) {
         return res

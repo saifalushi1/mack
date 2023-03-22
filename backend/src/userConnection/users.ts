@@ -1,4 +1,4 @@
-import db from "../connection";
+import dbConnection from "../connection";
 
 interface User {
     id: string;
@@ -19,6 +19,7 @@ interface userRoom {
 
 // Join user to chat
 export async function userJoin(user: User): Promise<User | undefined> {
+    const db = dbConnection();
     const userFound = await db.result(
         "SELECT * FROM chats WHERE user_id = $1",
         [user.id],
@@ -35,6 +36,7 @@ export async function userJoin(user: User): Promise<User | undefined> {
 
 // Get current user
 export async function getCurrentUser(id: string): Promise<User> {
+    const db = dbConnection();
     const user: userRoom = await db.one(
         "SELECT * FROM chats WHERE socket_id = $1",
         [id],
@@ -49,11 +51,13 @@ export async function getCurrentUser(id: string): Promise<User> {
 
 // removes user from chat
 async function removeUserFromChat(id: number): Promise<void> {
+    const db = dbConnection();
     await db.none("DELETE FROM chats WHERE user_id = $1", [id]);
 }
 
 // Get room users
 export async function getRoomUsers(room: number): Promise<number> {
+    const db = dbConnection();
     return await db.one(
         "SELECT room_number FROM chats where room_number = $1",
         [room],

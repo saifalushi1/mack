@@ -1,4 +1,4 @@
-import db from "../../../../connection";
+import dbConnection from "../../../../connection";
 
 interface IMessageId {
     id: number;
@@ -9,6 +9,7 @@ export async function createMessage(
     parentId: number | null,
     userMessage: string,
 ): Promise<IMessageId> {
+    const db = dbConnection();
     const message = await db.one(
         "INSERT INTO messages (id, parent_message_id, message_body, created_on, creator_id) VALUES (DEFAULT, $<parentId>, $<message>, current_timestamp, $<creator>) RETURNING id",
         {

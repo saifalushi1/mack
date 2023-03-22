@@ -1,4 +1,4 @@
-import db from "../../connection";
+import dbConnection from "../../connection";
 import { Request, Response, NextFunction } from "express";
 
 export async function getUserByUsername(
@@ -6,6 +6,7 @@ export async function getUserByUsername(
     res: Response,
     next: NextFunction,
 ): Promise<any> {
+    const db = dbConnection();
     const { username } = req.params;
     try {
         //When using like and passing special characters such as % you must use this format EXAMPLE: \'%$1#%\'

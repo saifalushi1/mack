@@ -1,4 +1,4 @@
-import db from "../../connection";
+import dbConnection from "../../connection";
 import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
 
@@ -7,6 +7,7 @@ export async function createUser(
     res: Response,
     next: NextFunction,
 ): Promise<any> {
+    const db = dbConnection();
     const { firstName, lastName, username, email, password } = req.body;
     if (!firstName || !lastName || !username || !email || !password) {
         return res.status(400).json({ error: "Missing field" });

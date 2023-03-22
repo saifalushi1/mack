@@ -1,4 +1,4 @@
-import db from "../../connection";
+import dbConnection from "../../connection";
 import { Request, Response, NextFunction } from "express";
 
 //REFACTOR TO SERVICE FUNC
@@ -7,6 +7,7 @@ export async function getLastTenMessagesReceived(
     res: Response,
     next: NextFunction,
 ) {
+    const db = dbConnection();
     try {
         const lastMessageIds = await db.any(
             "SELECT message_id FROM message_recipient WHERE recipient_id = $1 ORDER BY id DESC LIMIT 10",
