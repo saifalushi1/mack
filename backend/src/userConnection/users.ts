@@ -34,11 +34,14 @@ export async function userJoin(user: User): Promise<User | undefined> {
 }
 
 // Get current user
-export async function getCurrentUser(id: string): Promise<User> {
-    const user: userRoom = await db.one(
+export async function getCurrentUser(id: string): Promise<User | undefined> {
+    const user: userRoom | null = await db.oneOrNone(
         "SELECT * FROM chats WHERE socket_id = $1",
         [id],
     );
+    if (!user) {
+        return undefined;
+    }
     return {
         id: user.user_id.toString(),
         room: user.room_number,
@@ -48,7 +51,7 @@ export async function getCurrentUser(id: string): Promise<User> {
 }
 
 // removes user from chat
-async function removeUserFromChat(id: number): Promise<void> {
+export async function removeUserFromChat(id: number): Promise<void> {
     await db.none("DELETE FROM chats WHERE user_id = $1", [id]);
 }
 

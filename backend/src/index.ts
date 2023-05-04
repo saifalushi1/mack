@@ -5,7 +5,11 @@ dotenv.config();
 import http from "http";
 const socketio = require("socket.io"); // eslint-disable-line
 import { formatMessage } from "./utils/message";
-import { userJoin, getCurrentUser } from "./userConnection/users";
+import {
+    userJoin,
+    getCurrentUser,
+    removeUserFromChat,
+} from "./userConnection/users";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
@@ -65,15 +69,20 @@ io.on("connection", (socket: Socket) => {
     // listen for chat message from client and send back the message
     socket.on("chatMessage", async (msg) => {
         const user = await getCurrentUser(socket.id);
-        io.to(user.room.toString()).emit(
-            "message",
-            formatMessage(user.userName || "no user found", msg),
-        );
+        if (user) {
+            io.to(user.room.toString()).emit(
+                "message",
+                formatMessage(user.userName || "no user found", msg),
+            );
+        }
     });
 
     // runs when client disconnects (to all other users )
-    socket.on("disconnect", () => {
-        console.log("user disconnected");
+    socket.on("disconnect", async () => {
+        const user = await getCurrentUser(socket.id);
+        if (user) {
+            removeUserFromChat(parseInt(user.id));
+        }
     });
 });
 
