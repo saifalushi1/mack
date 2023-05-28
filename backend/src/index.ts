@@ -35,7 +35,7 @@ io.on("connection", (socket: Socket) => {
         "joinRoom",
         async (id: number, roomNumber: number, userName: string, roomName) => {
             try {
-                console.log("user joining");
+                console.log("user joining id:", id);
                 const user = await userJoin({
                     id,
                     room: roomNumber,
@@ -44,10 +44,9 @@ io.on("connection", (socket: Socket) => {
                     socketId: socket.id,
                 });
                 if (user === undefined) {
-                    const errorMessage: ErrorMessage = {
-                        errorMessage: "user has already joined",
-                    };
-                    socket.emit("userError", errorMessage);
+                    socket.emit("userError", {
+                        errorMessage: "error with user joining",
+                    });
                     return;
                 }
                 socket.join(user.room.toString());
@@ -103,7 +102,3 @@ app.use("/friend", friendController);
 httpServer.listen(PORT, () => {
     console.log(`The application is listening on port ${PORT}!`);
 });
-
-interface ErrorMessage {
-    errorMessage: "user has already joined";
-}

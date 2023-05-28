@@ -13,9 +13,9 @@ export interface Iuser {
     firstName: string
     lastName: string
     username: string
-    password: string
     email: string
 }
+
 
 const App = () => {
     const [connected, setConnected] = useState<boolean>(false)
@@ -23,7 +23,6 @@ const App = () => {
     const [user, setUser] = useState<Iuser>({
         id: 0,
         username: "",
-        password: "",
         email: "",
         firstName: "",
         lastName: ""
@@ -32,11 +31,24 @@ const App = () => {
         socket.on("connect", () => {
             setConnected(true)
         })
-        //implement cookieLogin and add an age to cookie
+        
+        const checkLoggedInStatus = async () => {
+            try{
+                return await cookieLogin()
+            }catch(err){
+                console.error(err)
+            }
+        }
+        checkLoggedInStatus().then((user: Iuser | undefined) => {
+            if(user){
+                setUser(user)
+                console.log("in checkedout function", user)
+            }
+        })
     }, [])
     return (
         <>
-            <Navigation loggedIn={LoggedIn} />
+            <Navigation loggedIn={LoggedIn} setLoggedIn={setLoggedIn} />
             <Routes>
                 <Route path="/" element={<LoginPage setUser={setUser} setLoggedIn={setLoggedIn}/>} />
                 <Route path="/chat" element={<Chat user={user} connected={connected} />} />
@@ -47,7 +59,3 @@ const App = () => {
 }
 
 export default App
-
-// function test(){
-//     document.cookie
-// }

@@ -8,9 +8,10 @@ export async function getUserById(
 ): Promise<any> {
     const { id } = req.params;
     try {
-        const userById = await db.one("SELECT * FROM users WHERE id = $1", [
-            id,
-        ]);
+        const userById = await db.one(
+            "SELECT email, first_name, id, last_name, username FROM users WHERE id = $1",
+            [id],
+        );
         return res.json(userById);
     } catch (err) {
         next(err);

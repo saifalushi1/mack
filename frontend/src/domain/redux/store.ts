@@ -18,7 +18,6 @@ function userReducer(state: Iuser = initialState, action: { type: string; payloa
             ...state,
             id: action.payload.id,
             username: action.payload.username,
-            password: action.payload.password,
             email: action.payload.email,
             firstName: action.payload.firstName,
             lastName: action.payload.lastName

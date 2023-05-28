@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { useState } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
 import "../../styling/nav.css"
@@ -9,9 +9,10 @@ axios.defaults.withCredentials = true
 
 interface IProps {
     loggedIn: boolean
+    setLoggedIn: Dispatch<SetStateAction<boolean>>
 }
 
-const Navigation: React.FC<IProps> = ({ loggedIn }): JSX.Element => {
+const Navigation: React.FC<IProps> = ({ loggedIn, setLoggedIn }): JSX.Element => {
     console.log("logged in ", loggedIn)
     const [isNavExpanded, setIsNavExpanded] = useState(false)
     const navigate = useNavigate()
@@ -20,6 +21,7 @@ const Navigation: React.FC<IProps> = ({ loggedIn }): JSX.Element => {
         try {
             //logout requires userID add context to pass the user info around
             await axios.post(`${apiURL}/logout`, { id: 1 })
+            setLoggedIn(false)
             navigate("/")
         } catch (err) {
             handleNavigationError(err)

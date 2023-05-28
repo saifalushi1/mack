@@ -23,14 +23,15 @@ const Chat: React.FC<AppProps> = (props): JSX.Element => {
     const [messages, setMessages] = useState<Array<IbotMessages>>([])
     const [roomNumber, setRoomNumber] = useState<number>(1)
     const [chatBody, setChatBody] = useState<string>("")
-    console.log(props)
+    console.log("chats user id", props.user.id)
     const joinRoom = () => {
         socket.emit("joinRoom", user.id, roomNumber, user.username,)
     }
 
     useEffect(() => {
+        console.log("JOINING ROOM ***")
         joinRoom()
-    }, [])
+    }, [user])
 
     useEffect(() => {
         socket.on("message", (message: IbotMessages) => {

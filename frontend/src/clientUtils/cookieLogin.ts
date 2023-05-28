@@ -10,13 +10,13 @@ interface Token {
 export async function cookieLogin(): Promise<Iuser | undefined> {
     let user: Iuser
     const access_token = Cookies.get("access_token")
+    console.log(access_token)
     const token: Token | null = decodeToken(access_token!)
+    console.log("token: ", token)
     const apiURL = process.env.REACT_APP_USER_ENDPOINT!
     if (token) {
-        await axios.get(`${apiURL}/getbyid/${token.id}`).then((res) => {
-            user = res.data
-            return user
-        })
+        const getUser = await axios.get(`${apiURL}/getbyid/${token.id}`)
+        return getUser.data
     }
     return undefined
 }

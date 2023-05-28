@@ -19,7 +19,14 @@ interface userRoom {
 
 // Join user to chat
 export async function userJoin(user: User): Promise<User | undefined> {
-    // Check if user is already in a chat room and remove them
+    console.log("userJoin", user.id);
+    const userExists = await db.oneOrNone("SELECT * FROM users WHERE id = $1", [
+        user.id,
+    ]);
+    if (!userExists) {
+        return undefined;
+    }
+
     const userFound = await db.oneOrNone(
         "SELECT * FROM chats WHERE user_id = $1",
         [user.id],
@@ -27,6 +34,7 @@ export async function userJoin(user: User): Promise<User | undefined> {
     if (userFound) {
         await removeUserFromChat(user.id);
     }
+    console.log(user.id);
     await db.none(
         "INSERT INTO chats (room_number, username, user_id, time_joined, room_name, socket_id) VALUES($<user.room>, $<user.userName>, $<user.id>, current_timestamp, $<user.roomName>, $<user.socketId>)",
         { user },

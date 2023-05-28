@@ -12,6 +12,7 @@ const fixedInputClass =
 interface IUserLogin {
     email: string
     password: string
+    remember: boolean
 }
 
 interface IUserError {
@@ -26,7 +27,7 @@ interface IProps {
 
 const LoginPage = ({ setUser, setLoggedIn }: IProps) => {
     const navigate = useNavigate()
-    const [userLogin, setUserLogin] = useState<IUserLogin>({ email: "", password: "" })
+    const [userLogin, setUserLogin] = useState<IUserLogin>({ email: "", password: "", remember: false })
     const [userError, setUserError] = useState<IUserError>({ isError: false, errorMessage: "" })
 
     const showUserError = (): JSX.Element => {
@@ -41,8 +42,10 @@ const LoginPage = ({ setUser, setLoggedIn }: IProps) => {
             setUserError((prevState) => ({ ...prevState, isError: false }))
             const loginData = await axios.post(`${apiURL}/login`, {
                 email: userLogin.email,
-                password: userLogin.password
+                password: userLogin.password,
+                remember: userLogin.remember
             })
+            // localStorage.setItem("JSESSIONID", loginData.)
             setUser(loginData.data.userinfo)
             setLoggedIn(true)
             navigate("/chat")
@@ -106,6 +109,19 @@ const LoginPage = ({ setUser, setLoggedIn }: IProps) => {
                                 name="remember-me"
                                 type="checkbox"
                                 className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                    if(e.target.checked){
+                                        setUserLogin((prevLogin) => ({
+                                            ...prevLogin,
+                                            remember: true
+                                        }))
+                                    } else {
+                                        setUserLogin((prevLogin) => ({
+                                            ...prevLogin,
+                                            remember: false
+                                        }))
+                                    }
+                                }}
                             />
                             <label
                                 htmlFor="remember-me"
