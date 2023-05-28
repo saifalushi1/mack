@@ -25,7 +25,7 @@ const Chat: React.FC<AppProps> = (props): JSX.Element => {
     const [chatBody, setChatBody] = useState<string>("")
     console.log(props)
     const joinRoom = () => {
-        socket.emit("joinRoom", user.id.toString(), roomNumber, user.username,)
+        socket.emit("joinRoom", user.id, roomNumber, user.username,)
     }
 
     useEffect(() => {
@@ -55,19 +55,13 @@ const Chat: React.FC<AppProps> = (props): JSX.Element => {
                         <i className="fas fa-smile"></i>{" "}
                         {props.connected ? "Mack" : "not connected"}
                     </h1>
-                    <a href="index.html" className="btn">
-                        Leave Room
-                    </a>
                 </header>
                 <main className="chat-main">
                     <div className="chat-sidebar">
                         <h3>
-                            <i className="fas fa-comments"></i> these are users:
+                            <i className="fas fa-comments"></i> Direct Messages:
                         </h3>
-                        <h2 id="room-name">bob</h2>
-                        <h3>
-                            <i className="fas fa-users"></i> Join Rooms
-                        </h3>
+                        <h2 id="room-name">PLACEHOLDER</h2>
                     </div>
                     <div className="chat-messages">
                         {messages.map((item, index) => (

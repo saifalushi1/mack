@@ -33,36 +33,41 @@ app.use(cookieParser());
 io.on("connection", (socket: Socket) => {
     socket.on(
         "joinRoom",
-        async (id: string, roomNumber: number, userName: string, roomName) => {
-            const user = await userJoin({
-                id,
-                room: roomNumber,
-                userName,
-                roomName,
-                socketId: socket.id,
-            });
-            if (user === undefined) {
-                const errorMessage: ErrorMessage = {
-                    errorMessage: "user has already joined",
-                };
-                socket.emit("userError", errorMessage);
-                return;
+        async (id: number, roomNumber: number, userName: string, roomName) => {
+            try {
+                console.log("user joining");
+                const user = await userJoin({
+                    id,
+                    room: roomNumber,
+                    userName,
+                    roomName,
+                    socketId: socket.id,
+                });
+                if (user === undefined) {
+                    const errorMessage: ErrorMessage = {
+                        errorMessage: "user has already joined",
+                    };
+                    socket.emit("userError", errorMessage);
+                    return;
+                }
+                socket.join(user.room.toString());
+
+                socket.emit(
+                    "message",
+                    formatMessage(
+                        bot,
+                        `Welcome to the chat roomNumber: ${user.room} user: ${user.userName}`,
+                    ),
+                );
+
+                // Broadcast when a user connects (to all users) thinking about changing or removing
+                socket.broadcast.emit(
+                    "message",
+                    formatMessage(bot, `${user.userName} has joined the chat`),
+                );
+            } catch (err) {
+                console.log(err);
             }
-            socket.join(user.room.toString());
-
-            socket.emit(
-                "message",
-                formatMessage(
-                    bot,
-                    `Welcome to the chat roomNumber: ${user.room} user: ${user.userName}`,
-                ),
-            );
-
-            // Broadcast when a user connects (to all users) thinking about changing or removing
-            socket.broadcast.emit(
-                "message",
-                formatMessage(bot, `${user.userName} has joined the chat`),
-            );
         },
     );
 
@@ -77,11 +82,11 @@ io.on("connection", (socket: Socket) => {
         }
     });
 
-    // runs when client disconnects (to all other users )
     socket.on("disconnect", async () => {
         const user = await getCurrentUser(socket.id);
         if (user) {
-            removeUserFromChat(parseInt(user.id));
+            console.log("removing user");
+            removeUserFromChat(user.id);
         }
     });
 });

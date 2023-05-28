@@ -1,7 +1,7 @@
 import db from "../connection";
 
 interface User {
-    id: string;
+    id: number;
     userName: string;
     room: number;
     socketId: string;
@@ -19,12 +19,13 @@ interface userRoom {
 
 // Join user to chat
 export async function userJoin(user: User): Promise<User | undefined> {
-    const userFound = await db.result(
+    // Check if user is already in a chat room and remove them
+    const userFound = await db.oneOrNone(
         "SELECT * FROM chats WHERE user_id = $1",
         [user.id],
     );
-    if (userFound.rowCount > 0) {
-        removeUserFromChat(parseInt(user.id));
+    if (userFound) {
+        await removeUserFromChat(user.id);
     }
     await db.none(
         "INSERT INTO chats (room_number, username, user_id, time_joined, room_name, socket_id) VALUES($<user.room>, $<user.userName>, $<user.id>, current_timestamp, $<user.roomName>, $<user.socketId>)",
@@ -43,7 +44,7 @@ export async function getCurrentUser(id: string): Promise<User | undefined> {
         return undefined;
     }
     return {
-        id: user.user_id.toString(),
+        id: user.user_id,
         room: user.room_number,
         socketId: user.socket_id,
         userName: user.username,
