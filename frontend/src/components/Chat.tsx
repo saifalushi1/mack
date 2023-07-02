@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { Iuser } from "../App"
+import { User } from "../App"
 import { socket } from "../clientUtils/socket"
 
 interface IbotMessages {
@@ -14,7 +14,7 @@ interface ImessageRoom {
 }
 
 interface AppProps {
-    user: Iuser
+    user: User
     connected: boolean
 }
 

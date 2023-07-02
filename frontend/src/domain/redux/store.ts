@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit"
-import { Iuser } from "../../App"
+import { User } from "../../App"
 
 const initialState = {
     id: 0,
@@ -10,7 +10,7 @@ const initialState = {
     lastName: ""
 }
 
-function userReducer(state: Iuser = initialState, action: { type: string; payload: Iuser }) {
+function userReducer(state: User = initialState, action: { type: string; payload: User }) {
     // Check to see if the reducer cares about this action
     if (action.type === "login/signin") {
         // If so, make a copy of `state`

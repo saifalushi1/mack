@@ -2,33 +2,33 @@ import { Dispatch, SetStateAction, useState } from "react"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
 import Header from "./Header"
-import { Iuser } from "../../App"
+import { User } from "../../App"
 import { socket } from "../../clientUtils/socket"
 
 axios.defaults.withCredentials = true
 const fixedInputClass =
     "rounded-md appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
 
-interface IUserLogin {
+interface UserLogin {
     email: string
     password: string
     remember: boolean
 }
 
-interface IUserError {
+interface UserError {
     isError: boolean
     errorMessage: string
 }
 
 interface IProps {
-    setUser: Dispatch<SetStateAction<Iuser>>
+    setUser: Dispatch<SetStateAction<User>>
     setLoggedIn: Dispatch<SetStateAction<boolean>>
 }
 
 const LoginPage = ({ setUser, setLoggedIn }: IProps) => {
     const navigate = useNavigate()
-    const [userLogin, setUserLogin] = useState<IUserLogin>({ email: "", password: "", remember: false })
-    const [userError, setUserError] = useState<IUserError>({ isError: false, errorMessage: "" })
+    const [userLogin, setUserLogin] = useState<UserLogin>({ email: "", password: "", remember: false })
+    const [userError, setUserError] = useState<UserError>({ isError: false, errorMessage: "" })
 
     const showUserError = (): JSX.Element => {
         return <p className="text-red-400">{userError.errorMessage}</p>
@@ -154,7 +154,7 @@ const LoginPage = ({ setUser, setLoggedIn }: IProps) => {
 export default LoginPage
 
 
-function handleError(err: unknown, setUserError: Dispatch<SetStateAction<IUserError>>){
+function handleError(err: unknown, setUserError: Dispatch<SetStateAction<UserError>>){
     if (axios.isAxiosError(err)) {
         setUserError((prevState) => ({ ...prevState, isError: true }))
         if (!err?.response) {

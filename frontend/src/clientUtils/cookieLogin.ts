@@ -1,14 +1,13 @@
 import { decodeToken } from "react-jwt"
 import Cookies from "js-cookie"
-import { Iuser } from "../App"
+import { User } from "../App"
 import axios from "axios"
 interface Token {
     iat: number
     id: number
     username: string
 }
-export async function cookieLogin(): Promise<Iuser | undefined> {
-    let user: Iuser
+export async function cookieLogin(): Promise<User | undefined> {
     const access_token = Cookies.get("access_token")
     console.log(access_token)
     const token: Token | null = decodeToken(access_token!)
