@@ -1,8 +1,7 @@
-import { getUserFriends } from "./getUsersFriends";
-import { getAllFriends } from "./getAllFriends";
-import { createFriend } from "./createFriend";
-
-export { getAllFriends, createFriend, getUserFriends };
+export * from "./getUsersFriends";
+export * from "./createFriend";
+export * from "./getPendingFriendRequests";
+export * from "./editFriendRequest";
 
 export interface UsersFriends {
     username: string;

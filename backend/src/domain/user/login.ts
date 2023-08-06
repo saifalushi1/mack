@@ -1,9 +1,7 @@
 import db from "../../connection";
 import { Request, Response, NextFunction, CookieOptions } from "express";
-import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import dotenv from "dotenv";
-dotenv.config();
+import jwt from "jsonwebtoken";
 
 export async function login(req: Request, res: Response, next: NextFunction) {
     const { email, password, remember } = req.body;
@@ -22,10 +20,10 @@ export async function login(req: Request, res: Response, next: NextFunction) {
             return res.status(404).json({ error: "No account found" });
         }
 
-        const userinfo = await db.one("SELECT * FROM users WHERE email = $1", [
+        const userInfo = await db.one("SELECT * FROM users WHERE email = $1", [
             email,
         ]);
-        const match = await bcrypt.compare(password, userinfo.password);
+        const match = await bcrypt.compare(password, userInfo.password);
 
         if (!match) {
             return res
@@ -34,10 +32,11 @@ export async function login(req: Request, res: Response, next: NextFunction) {
         }
 
         await db.none("UPDATE users SET is_active = 1 WHERE id = $1", [
-            userinfo.id,
+            userInfo.id,
         ]);
+
         const token = jwt.sign(
-            { id: userinfo.id, username: userinfo.username },
+            { id: userInfo.id, username: userInfo.username },
             process.env.SECRET!,
         );
         let cookieOptions: CookieOptions = {
@@ -54,14 +53,16 @@ export async function login(req: Request, res: Response, next: NextFunction) {
         res.cookie("access_token", token, cookieOptions).json({
             match: match,
             userinfo: {
-                id: userinfo.id,
-                username: userinfo.username,
-                email: userinfo.email,
-                firstName: userinfo.first_name,
-                lastName: userinfo.last_name,
+                id: userInfo.id,
+                username: userInfo.username,
+                email: userInfo.email,
+                firstName: userInfo.first_name,
+                lastName: userInfo.last_name,
             },
         });
+
+        return;
     } catch (err) {
-        next(err);
+        console.log("an error occured while trying to log the user in");
     }
 }
