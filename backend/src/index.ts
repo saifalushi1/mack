@@ -30,6 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(cookieParser());
 
+//maybe need to seperate this out working on a few concept ideas
 io.on("connection", (socket: Socket) => {
     socket.on(
         "joinRoom",
