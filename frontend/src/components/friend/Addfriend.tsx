@@ -9,7 +9,7 @@ export function addFriend(user: User){
     const [friendRequests, setFriendRequests] = useState<FriendRequests[]>()
     return (
         <>
-        
+            <div>Hello world</div>
         </>
     )
 }
